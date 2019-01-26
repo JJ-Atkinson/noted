@@ -1,0 +1,11 @@
+/*.log
+/target
+/*-init.clj
+/resources/public/js
+out
+/.idea
+/src/old
+figwheel_server.log
+.rebel_readline_history
+*.iml
+/node_modules
