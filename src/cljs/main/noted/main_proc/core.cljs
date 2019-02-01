@@ -1,4 +1,4 @@
-(ns electro-note.main-proc.core
+(ns noted.main-proc.core
   (:require [taoensso.timbre :as tmb]))
 
 (def electron (js/require "electron"))
@@ -14,38 +14,36 @@
 
 
 
-
-(defn send-mode-switch-message [new-mode]
-  (when @main-window
-    (let [contents (.-webContents ^js/electron.BrowserWindow @main-window)]
-      (.send contents "message" (str new-mode)))))
-
-(defn toggle-window [new-mode]
+(defn window-visible? []
   (if-let [win ^js/electron.BrowserWindow @main-window]
-    (let [mode-change? (not= new-mode @last-opened-mode)
-          visible? (.isVisible ^js/electron.BrowserWindow @main-window)
-          open? (or mode-change? (not visible?))]
-      (when mode-change?
-        (send-mode-switch-message new-mode)
-        (reset! last-opened-mode new-mode))
-      (if open?
-        (.show win)
-        (.hide win)))))
+    (.isVisible win)
+    false))
+
+(defn send-mode-switch-message [mode]
+  (if-let [win ^js/electron.BrowserWindow @main-window]
+    (.send (.-webContents win) 
+           "message" 
+           (str {:mode mode
+                 :visible? (window-visible?)}))))
+
+(defn show-window [mode]
+  (if-let [win ^js/electron.BrowserWindow @main-window]
+    (do (.show win)
+        (send-mode-switch-message mode))))
 
 (defn hide-window []
   (if-let [win ^js/electron.BrowserWindow @main-window]
     (.hide win)))
 
 
+
 (defn init-browser []
   (reset! main-window (browser-window.
                         (clj->js {:with      200
                                   :height    500
-                                  ;:transparent false
                                   :show      true
                                   :resizable true
-                                  :frame     true
-                                  ;:skipTaskbar true
+                                  :frame     false
                                   })))
   ; Path is relative to the compiled js file (main.js in our case)
   (.loadURL ^js/electron.BrowserWindow @main-window (str "file://" js/__dirname "/public/index.html"))
@@ -54,8 +52,8 @@
       (.on contents "did-finish-load" #(.send contents "message" "Hello window!")))
 
   #_(.minimize ^js/electron.BrowserWindow @main-window)
-  (.register global-shortcut "CommandOrControl+Shift+S" #(toggle-window :search))
-  (.register global-shortcut "CommandOrControl+Shift+N" #(toggle-window :new-note)))
+  (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search))
+  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :new-note)))
 
 ; CrashReporter can just be omitted
 (.start crash-reporter

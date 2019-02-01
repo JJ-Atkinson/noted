@@ -3,7 +3,7 @@ Commands to start dev environment
 ```bash
 lein less auto
 lein with-profile dev figwheel ui-dev
-lein cljsbuild main-dev auto
+lein cljsbuild auto main-dev
 lein re-frisk
 # after compile of ui-dev and main-dev, 
 electron .
