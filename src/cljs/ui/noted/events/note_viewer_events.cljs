@@ -36,7 +36,6 @@
       {:dispatch [:note-viewer/goto-editor]}
       {})))
 
-
 (rf/reg-event-fx
   :note-viewer/search-for-tag
   eu/default-interceptors

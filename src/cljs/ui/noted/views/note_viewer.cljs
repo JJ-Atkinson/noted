@@ -24,4 +24,5 @@
                        {:on-click #(e> [:note-viewer/search-for-tag t])}
                        (str "#" t)])
               (<s [:note-viewer/tags])))
-   [:span.content (<s [:note-viewer/content])]])
+   [:div.content {:dangerouslySetInnerHTML
+                  {:__html (<s [:note-viewer/content])}}]])

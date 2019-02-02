@@ -2,7 +2,8 @@
   (:require [re-frame.core :as rf]
             [noted.search-tools :as st]
             [taoensso.timbre :as tmb]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [markdown.core :as md]))
 
 (defn <s [query] @(rf/subscribe query))
 
@@ -61,8 +62,8 @@
 (rf/reg-sub
   :note-viewer/content
   (fn [db _]
-    (get-in db [:ui-common :notes
-                (get-in db [:note-viewer :id]) :content])))
+    (md/md->html (get-in db [:ui-common :notes
+                          (get-in db [:note-viewer :id]) :content]))))
 
 (rf/reg-sub
   :note-viewer/tags
