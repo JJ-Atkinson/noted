@@ -18,7 +18,7 @@
   (str/replace query tag-regex ""))
 
 (defn keep-sorted [notes ids]
-  (map #(get notes %) ids))
+  (map #(get (into [] notes) %) ids))
 
 (defn fuse-search [clear-query notes js-notes]
   (let [opts {:keys     [{:name   "title"

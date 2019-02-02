@@ -11,13 +11,18 @@
 (defn render-tags [tags]
   (into [:div.tags] (map (fn [tag]
                            [:a
-                            {:on-click #(e> [:search-view/insert-tag-into-search tag])}
+                            {:on-click (fn [e]
+                                         (tmb/debug e)
+                                         (.stopPropagation e)
+                                         (e> [:search-view/insert-tag-into-search tag])
+                                         true)}
                             (str "#" tag) ])
                          tags)))
 
 (defn search-view []
   [:div.search-view
    [comps/editor
+    :autofocus true
     :key "e"
     :on-change #(e> [:search-view/update-search-query %])
     :default-value (rf/subscribe [:search-view/query-string])
@@ -28,5 +33,5 @@
                                 {:on-click #(e> [:note-viewer/goto-id (:id note)])}
                                 [:span.title (:title note)]
                                 [:p.content (:content note)]
-                                (render-tags (:tags note))])
+                                [render-tags (:tags note)]])
                              (<s [:search-view/query-results])))])

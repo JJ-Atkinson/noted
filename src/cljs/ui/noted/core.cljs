@@ -13,12 +13,10 @@
             [noted.views.search-view :as search-view]
             [noted.views.note-viewer :as note-viewer]
             [re-frame.core :as rf]
-            [cljsjs.fuse]))
-
+            [cljsjs.fuse]
+            [re-frame.core :as re-frame]))
 
 (enable-console-print!)
-
-
 
 (def electron (js/require "electron"))
 (def ipc (.-ipcRenderer electron))
@@ -67,8 +65,17 @@
 
 (defn ^:export init []
   (rf/dispatch-sync [:reset-db])
-  ;(rf/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
+  (rf/dispatch-sync [::rp/add-keyboard-event-listener "keydown"])
   (dev-setup)
   (mount-root)
   (init-main-comms))
 
+(re-frame/dispatch
+  [::rp/set-keydown-rules
+   {:event-keys [[[:new-note-view/handle-esc]
+                  [{:keyCode 27}]]
+                 [[:note-viewer/maybe-edit]
+                  [{:keyCode 69                             ; E
+                    :ctrlKey true}]]]
+    ; esc
+    :always-listen-keys [{:keyCode 27}]}])

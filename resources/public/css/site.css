@@ -58,14 +58,18 @@ input[type="button"]:focus {
   color: #b5b5b5;
 }
 .search-view {
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 .search-view .search {
   font-size: 1.5em;
-  height: 1.8em;
+  height: 2.5em;
   border-left: none !important;
   border-right: none !important;
   width: 100%;
+}
+.search-view .results {
+  overflow-y: auto;
 }
 .search-view .results > div {
   border: 1px solid #eee;
@@ -129,7 +133,13 @@ input[type="button"]:focus {
   justify-content: space-between;
   align-items: flex-start;
 }
+.note-viewer .top-bar .title {
+  width: 70%;
+}
 .note-viewer .top-bar .buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
   padding: 0;
   margin: 0;
 }
