@@ -1,4 +1,4 @@
-(defproject refame-transform "0.1.0-SNAPSHOT"
+(defproject noted "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.10.238"]
                  [reagent "0.7.0"]
@@ -11,7 +11,8 @@
                  [re-frisk-remote "0.5.5"]
                  [com.bhauman/rebel-readline-cljs "0.1.4"]
                  [medley "1.1.0"]
-                 [cljsjs/fuse "2.6.2-0"]]
+                 [cljsjs/fuse "2.6.2-0"]
+                 [markdown-clj "1.0.5"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-less "1.7.5"]

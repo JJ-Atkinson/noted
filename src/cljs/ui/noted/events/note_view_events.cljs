@@ -77,12 +77,4 @@
     {:dispatch-n [[:new-note-view/copy-note (first event)]
                   [:set-active-mode :new-note]]}))
 
-(rf/reg-event-fx
-  :new-note-view/handle-esc
-  eu/default-interceptors
-  (fn [{:keys [event db]}]
-    (if (= (get-in db [:ui-common :mode]) :new-note)
-      {:dispatch    [:new-note-view/clear-form]
-       :hide-window nil}
-      {})))
 
