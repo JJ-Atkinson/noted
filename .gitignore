@@ -1,7 +1,10 @@
 /*.log
 /target
 /*-init.clj
-/resources/public/js
+/resources/public/js/main-dev/
+/resources/public/js/ui-out/
+/resources/public/js/ui-core.js
+/resources/public/css/site.css
 out
 /.idea
 /src/old

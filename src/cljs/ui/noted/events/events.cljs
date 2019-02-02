@@ -30,7 +30,14 @@
     (assoc-in db [:ui-common :mode] mode)))
 
 
-
+(rf/reg-event-fx
+  :handle-esc
+  eu/default-interceptors
+  (fn [{:keys [event db]}]
+    (let [mode (tmb/spy (get-in db [:ui-common :mode]))]
+      {:dispatch-n  [(when (= mode :new-note) [:new-note-view/clear-form])
+                     (when (= mode :search) [:search-view/update-search-query ""])]
+       :hide-window nil})))
 
 
 (rf/reg-fx

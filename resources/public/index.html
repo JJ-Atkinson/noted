@@ -2,11 +2,16 @@
 <html lang="en">
   <head>
     <meta charset='utf-8'>
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="css/hljs.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/re-com.css">
+    
     <link rel="stylesheet" href="vendor/css/material-design-iconic-font.min.css">
-    <link rel="stylesheet" href="vendor/css/re-com.css">
+    
     <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300" rel="stylesheet" type="text/css">
+    <script src="js/highlight.pack.js"></script>
     
     <link href="css/site.css" rel="stylesheet" type="text/css">
   </head>
@@ -14,5 +19,18 @@
     <div id="app"></div>
     <script src="js/ui-core.js"></script>
     <script>noted.core.init();</script>
+    <script>
+      document.body.addEventListener('DOMSubtreeModified', function () {
+
+        document.querySelectorAll("pre code").forEach(
+                function (elm, key) {
+                  if (!elm.dataset.parsed) {
+                    elm.dataset.parsed = true;
+                    hljs.highlightBlock(elm);
+                  }
+                });
+
+      }, false);
+    </script>
   </body>
 </html>

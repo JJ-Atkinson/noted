@@ -38,18 +38,10 @@
      :new-note [new-note-view/new-note-view]
      :note-viewer [note-viewer/note-viewer])])
 
-;(js/document.addEventListener "keydown" #(when 
-;                                           (= "Escape" (str (.-key %)))
-;                                           (.send ipc "message" ":hide")))
-
-
-
-
 
 (enable-re-frisk-remote! {:enable-re-frame-10x? true})
 
 (defn dev-setup []
-  #_(when config/debug?)
   (enable-console-print!))
 
 (defn mount-root []
@@ -72,7 +64,7 @@
 
 (re-frame/dispatch
   [::rp/set-keydown-rules
-   {:event-keys [[[:new-note-view/handle-esc]
+   {:event-keys [[[:handle-esc]
                   [{:keyCode 27}]]
                  [[:note-viewer/maybe-edit]
                   [{:keyCode 69                             ; E
