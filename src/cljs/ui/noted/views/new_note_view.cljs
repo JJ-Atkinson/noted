@@ -17,7 +17,8 @@
     :class "title"
     :default-value (rf/subscribe [:new-note-view/form-title])
     :on-change #(e> [:new-note-view/update-form-title %])
-    :placeholder "Title"]
+    :placeholder "Title"
+    :autofocus true]
    [comps/editor 
     :key "c"
     :type :textarea

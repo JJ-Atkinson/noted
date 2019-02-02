@@ -78,7 +78,7 @@
 (s/def ::id int?)
 (s/def ::note-viewer (s/keys :req-un [::id]))
 
-(def default-note-view-form {:id 0
+(def default-note-view-form {:id -1
                              :content ""
                              :title ""
                              :tags ""})

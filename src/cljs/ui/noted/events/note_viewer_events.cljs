@@ -29,6 +29,15 @@
                 (get-in db [:note-viewer :id])]}))
 
 (rf/reg-event-fx
+  :note-viewer/maybe-edit
+  eu/default-interceptors
+  (fn [{:keys [db]}]
+    (if (= :note-viewer (get-in db [:ui-common :mode]))
+      {:dispatch [:note-viewer/goto-editor]}
+      {})))
+
+
+(rf/reg-event-fx
   :note-viewer/search-for-tag
   eu/default-interceptors
   ; tag as text w/o the #

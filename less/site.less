@@ -75,15 +75,21 @@ input[type="button"]:hover, input[type="button"]:focus {
 }
 
 .search-view {
-  overflow-y: auto;
-
+  //overflow-y: paged-y;
+  display: flex;
+  flex-direction: column;
   .search {
 
     font-size: 1.5em;
-    height: 1.8em;
+    height: 2.5em;
     border-left: none !important;
     border-right: none !important;
     width: 100%;
+  }
+  
+  
+  .results {
+    overflow-y: auto;
   }
 }
 
@@ -174,7 +180,14 @@ input[type="button"]:hover, input[type="button"]:focus {
     justify-content: space-between;
     align-items: flex-start;
     
+    .title {
+      width: 100% - 30em;
+    }
+    
     .buttons {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
       padding: 0;
       margin: 0;
       .search, .edit {

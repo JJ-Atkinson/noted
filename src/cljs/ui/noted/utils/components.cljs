@@ -10,33 +10,39 @@
 (s/def ::on-change-time #{:continuous :on-action})
 (s/def ::placeholder string?)
 (s/def ::key string?)
+(s/def ::autofocus boolean?)
 
 (s/def ::editor-opts (s/keys :req-un [::class
                                       ::on-change
                                       ::default-value
                                       ::type
                                       ::on-change-time
-                                      ::key]))
+                                      ::key
+                                      ::autofocus]))
 
 (def default-editor-opts
-  {:class ""
-   :default-value ""
-   :type :input
+  {:class          ""
+   :default-value  ""
+   :type           :input
    :on-change-time :on-action
-   :placeholder ""
-   :key ""})
+   :placeholder    ""
+   :key            ""
+   :autofocus      false})
 
 (defn editor [& opts]
   ":class :default-value :type :on-change-time :placeholder :key :on-change"
-  (let [{:keys [class on-change default-value type placeholder key]} 
-              (merge default-editor-opts
-                     (uc/parse-opts opts default-editor-opts ::editor-opts))]
+  (let [{:keys [class on-change default-value type placeholder key autofocus]}
+        (merge default-editor-opts
+               (uc/parse-opts opts default-editor-opts ::editor-opts))]
     (r/create-class
       {:display-name   "dynamic-text-area"
        :reagent-render (fn [] [type
-                               {:class         class
-                                :on-change     #(on-change (.-value (.-target %)))
-                                :value (if (string? default-value)
+                               (merge
+                                 {:class       class
+                                  :on-change   #(on-change (.-value (.-target %)))
+                                  :value       (if (string? default-value)
                                                  default-value
                                                  @default-value)
-                                :placeholder   placeholder}])})))
+                                  :placeholder placeholder}
+                                 (when autofocus
+                                   {:auto-focus true}))])})))
