@@ -4,12 +4,8 @@
             [clojure.string :as str]))
 
 
-(rf/reg-event-db
-  :search-view/update-search-query
-  eu/default-interceptors
-  (fn [db [qstr]]
-    (assoc-in db [:search-view :query] qstr)))
 
+(eu/basic-event :search-view/update-search-query [:search-view :query])
 
 (rf/reg-event-db
   :search-view/insert-tag-into-search

@@ -33,7 +33,7 @@
     
     :div.results (map (fn [note]
                         [:div
-                         {:on-click #(e> [:preview-note/goto-id (:id note)])
+                         {:on-click #(e> [:preview-note/set-and-open-id (:id note)])
                           :key      (str (:id note))}
                          [:span.title (:title note)]
                          [:p.content (:content note)]

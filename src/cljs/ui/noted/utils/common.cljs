@@ -18,15 +18,16 @@
   ([opts]
    (when (not (even? (count opts)))
      (throw (ex-cause (str "incorrect arity on optional args: " opts))))
-   
-   
    (into {} (map vec (partition 2 opts))))
   
   ([opts defaults spec]
     (let [res (merge defaults (parse-opts opts))]
       (if (s/valid? spec res)
         res
-        [:noted.utils.common/invalid-opts "check the opts"]))))
+        (do
+          (tmb/error "bad opts" res)
+          [:noted.utils.common/invalid-opts "check the opts"])))))
+
 
 (defn process-tag-str [s]
   (remove empty? (-> s

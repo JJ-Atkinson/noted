@@ -1,7 +1,9 @@
 (ns noted.specs
   (:require [cljs.spec.alpha :as s]
             [re-frame.core :as rf]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.core]
+            [taoensso.timbre :as tmb]))
 
 
 
@@ -19,24 +21,14 @@
   (rf/after (partial check-and-throw ::db-spec)))
 
 
-#_(s/def ::tracks-data (s/coll-of :lib-spec/track-cleaned))
-#_(s/def ::album-data-client (s/merge (s/keys
-                                        :req-un [::album-art-url
-                                                 ::tracks-data])
-                                      :lib-spec/album))
-#_(s/def ::active-view #{:artist-view
-                         :album-view
-                         :search-view
-                         :tracks-view})
-
 (defn note-map? [note-map]
-  true #_(and
+  (and
     (map? note-map)
-    (reduce clojure.core/and
-            (map (fn [k v]
-                   (and (s/valid? ::note v)
-                        (= k (:id v))))
-                 note-map))))
+    (every? true? (map (fn [[k v]]
+                         (and (s/valid? ::note v)
+                              (= k (:id v))))
+                       note-map))))
+
 
 (s/def ::mode #{:new-note
                 :preview-note
@@ -49,7 +41,7 @@
 
 (s/def :note/title not-whitespace?)
 (s/def :note/content not-whitespace?)
-(s/def :note/tags (s/coll-of string?))
+(s/def :note/tags (s/coll-of not-whitespace?))
 (s/def :note/id int?)
 (s/def ::note (s/keys :req-un [:note/title
                                :note/content
@@ -89,26 +81,26 @@
 (s/def ::id int?)
 (s/def ::preview-note (s/keys :req-un [::id]))
 
-(def default-note-editor-form {:id -1
-                             :content ""
-                             :title ""
-                             :tags ""})
+(def default-note-editor-form {:id      -1
+                               :content ""
+                               :title   ""
+                               :tags    ""})
 
-(def default-db {:preview-note   {:id 0}
-                 :note-editor {:note-form default-note-editor-form}
-                 :search-view   {:query ""}
-                 :ui-common     {:mode  :new-note
-                                 :notes [#_{
-                                          :title   "Where to locate lein"
-                                          :content "`which lein`"
-                                          :tags    ["bash" "tools"]}
-                                         #_{
-                                          :title   "Profiles in lein"
-                                          :content "Profiles override arbitrary values in the base of 
+(def default-db {:preview-note {:id 0}
+                 :note-editor  {:note-form default-note-editor-form}
+                 :search-view  {:query ""}
+                 :ui-common    {:mode  :new-note
+                                :notes [#_{
+                                           :title   "Where to locate lein"
+                                           :content "`which lein`"
+                                           :tags    ["bash" "tools"]}
+                                        #_{
+                                           :title   "Profiles in lein"
+                                           :content "Profiles override arbitrary values in the base of 
           `defproject`. They can be used on any command with `lein with-profile [name] ...`"
-                                          :tags    ["lein"]
-                                          }
-                                         ]}})
+                                           :tags    ["lein"]
+                                           }
+                                        ]}})
 
 
 (rf/reg-event-db

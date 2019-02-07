@@ -7,27 +7,12 @@
             [noted.events.events-utils :as eu]))
 
 
-(defn gen-id [curr-ids]
-  (inc (apply max curr-ids)))
 
 
-(rf/reg-event-db
-  :note-editor/update-form-title
-  eu/default-interceptors
-  (fn [db [title]]
-    (assoc-in db [:note-editor :note-form :title] title)))
 
-(rf/reg-event-db
-  :note-editor/update-form-content
-  eu/default-interceptors
-  (fn [db [content]]
-    (assoc-in db [:note-editor :note-form :content] content)))
-
-(rf/reg-event-db
-  :note-editor/update-form-tags
-  eu/default-interceptors
-  (fn [db [tags-str]]
-    (assoc-in db [:note-editor :note-form :tags] tags-str)))
+(eu/basic-event :note-editor/update-form-title  [:note-editor :note-form :title])
+(eu/basic-event :note-editor/update-form-content [:note-editor :note-form :content])
+(eu/basic-event :note-editor/update-form-tags [:note-editor :note-form :tags])
 
 
 
@@ -39,12 +24,14 @@
               (let [note-form (get-in db [:note-editor :note-form])
                     old-notes (get-in db [:ui-common :notes])
                     id (if (= -1 (:id note-form))
-                         (gen-id (keys (get-in db [:ui-common :notes])))
+                         (eu/gen-id (keys (get-in db [:ui-common :notes])))
                          (:id note-form))]
                 (if (not (s/valid? :noted.specs/note-form note-form))
-                  (do (tmb/error "did not submit form. didn't conform to ::note-form. they are " note-form) old-notes)
+                  (do (tmb/error "did not submit form, because it isn't conformal to ::note-form. " note-form) old-notes)
                   (assoc old-notes id
-                    (update note-form :tags uc/process-tag-str)))))))
+                                   (-> note-form
+                                       (update :tags uc/process-tag-str)
+                                       (assoc :id id))))))))
 
 (rf/reg-event-db
   :note-editor/clear-form

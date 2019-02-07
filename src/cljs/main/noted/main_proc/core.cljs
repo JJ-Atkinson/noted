@@ -93,7 +93,7 @@
            :submitURL   "https://example.com/submit-url"
            :autoSubmit  false}))
 
-#_(.on app "window-all-closed" #(when-not (= js/process.platform"darwin")
+#_(.on app "window-all-closed" #(when-not (= js/process.platform "darwin")
                                   (.quit app)))
 (.on app "ready" init-browser)
 
@@ -103,10 +103,10 @@
                                  (cond
                                    (= e ":hide")
                                    (hide-window)
-                                   
+
                                    (str/starts-with? e ":store")
                                    (store-notes (apply str (drop 6 e)))
-                                   
+
                                    (= e ":pull")
                                    (dispatch-stored-notes)
                                    :else (tmb/debug "forgot ipc message? " e)))))
