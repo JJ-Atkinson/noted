@@ -1,4 +1,4 @@
-(ns noted.views.new-note-view
+(ns noted.views.note-editor
   (:require
     [noted.events.events-utils :refer [e>]]
     [noted.subs.subs :refer [<s]]
@@ -9,32 +9,32 @@
 
 
 
-(defn new-note-view []
-  [:div.new-note-view
+(defn note-editor []
+  [:div.note-editor
    [comps/editor 
     :key    "e"
     :type :input
     :class "title"
-    :default-value (rf/subscribe [:new-note-view/form-title])
-    :on-change #(e> [:new-note-view/update-form-title %])
+    :default-value (rf/subscribe [:note-editor/form-title])
+    :on-change #(e> [:note-editor/update-form-title %])
     :placeholder "Title"
     :autofocus true]
    [comps/editor 
     :key "c"
     :type :textarea
     :class "content"
-    :default-value (rf/subscribe [:new-note-view/form-content])
-    :on-change #(e> [:new-note-view/update-form-content %])
+    :default-value (rf/subscribe [:note-editor/form-content])
+    :on-change #(e> [:note-editor/update-form-content %])
     :placeholder "content"]
    [:div.bottom-bar
     [comps/editor
      :key "t"
      :type :input
      :class "tags"
-     :default-value (rf/subscribe [:new-note-view/form-tags])
-     :on-change #(e> [:new-note-view/update-form-tags %])
+     :default-value (rf/subscribe [:note-editor/form-tags])
+     :on-change #(e> [:note-editor/update-form-tags %])
      :placeholder "#tags"]
      [:input.submit
       {:type "button"
        :value "Submit"
-       :on-click #(e> [:new-note-view/submit-note-form])}]]])
+       :on-click #(e> [:note-editor/submit-note-form])}]]])

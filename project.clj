@@ -12,9 +12,11 @@
                  [com.bhauman/rebel-readline-cljs "0.1.4"]
                  [medley "1.1.0"]
                  [cljsjs/fuse "2.6.2-0"]
-                 [markdown-clj "1.0.5"]]
+                 [markdown-clj "1.0.5"]
+                 #_[fipp "0.6.15"]
+                 #_[com.taoensso/nippy "2.14.0"]]
 
-  :plugins [[lein-cljsbuild "1.1.7"]
+  :plugins [[lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]
             [lein-less "1.7.5"]
             [lein-re-frisk "0.5.8"]]
 
@@ -22,9 +24,14 @@
 
   :source-paths ["src/clj" "src/cljs/ui" "src/cljs/main" "src/cljs/common"]
 
-  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
+  :clean-targets ^{:protect false} [
+                                    "resources/public/js/main-dev"
+                                    "resources/public/js/ui-out"
+                                    "resources/public/js/ui-core.js"
+                                    "resources/main.js"]
 
-  :figwheel {:css-dirs ["resources/public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]
+             :open-file-command "idea-line-opener"}
 
   :less {:source-paths ["less"]
          :target-path  "resources/public/css"}
@@ -62,13 +69,14 @@
     {:source-paths ["src/cljs/ui" "src/cljs/common"]
      :id           "ui-dev"
      :figwheel     {:on-jsload "noted.core/mount-root"}
-     :compiler     {:output-to       "resources/public/js/ui-core.js"
-                    :output-dir      "resources/public/js/ui-out"
-                    :source-map      true
-                    :asset-path      "js/ui-out"
-                    :optimizations   :none
-                    :cache-analysis  true
-                    :main            "noted.core"
+     :compiler     {:output-to              "resources/public/js/ui-core.js"
+                    :output-dir             "resources/public/js/ui-out"
+                    ;:source-map             true
+                    :asset-path             "js/ui-out"
+                    ;:optimizations          :simple
+                    :optimizations          :none
+                    :cache-analysis         true
+                    :main                   "noted.core"
                     :preloads        [devtools.preload
                                       day8.re-frame-10x.preload
                                       re-frisk.preload]
@@ -76,23 +84,44 @@
                                       "day8.re_frame.tracing.trace_enabled_QMARK_" true}
                     :external-config {:devtools/config {:features-to-install    [:formatters :hints]
                                                         :fn-symbol              "F"
-                                                        :print-config-overrides true}}}}
-    {:source-paths ["src/cljs/main" "src/cljs/common"]
-     :id           "main-dev"
-     :compiler     {:output-to      "resources/main.js"
-                    :output-dir     "resources/public/js/main-dev"
-                    :optimizations  :simple
-                    :pretty-print   true
-                    :cache-analysis true}}
+                    :print-config-overrides true}}          
+                    }}
+{:source-paths ["src/cljs/ui" "src/cljs/common"]
+ :id           "ui-min"
+ :figwheel     {:on-jsload "noted.core/mount-root"}
+ :compiler     {:output-to      "min/public/js/ui-core.js"
+                :output-dir     "min/public/js/ui-proc"
+                :source-map     false
+                :asset-path     "js/ui-out"
+                :optimizations  :none
+                :cache-analysis false
+                :main           "noted.core"}}
+
+{:source-paths ["src/cljs/main" "src/cljs/common"]
+ :id           "main-dev"
+ :compiler     {:output-to      "resources/main.js"
+                :output-dir     "resources/public/js/main-dev"
+                :optimizations  :simple
+                :pretty-print   true
+                :cache-analysis true}}
+
+{:source-paths ["src/cljs/main" "src/cljs/common"]
+ :id           "main-min"
+ :compiler     {:output-to            "min/main.js"
+                :output-dir           "min/public/js/main-proc"
+                :optimizations        :none
+                :pretty-print         true
+                :cache-analysis       true
+                :source-map-timestamp false}}
 
 
-    ;{:id           "min"
-    ;   :source-paths ["src/cljs"]
-    ;   :compiler     {:main            refame-transform.core
-    ;                  :output-to       "resources/public/js/compiled/app.js"
-    ;                  :optimizations   :advanced
-    ;                  :closure-defines {goog.DEBUG false}
-    ;                  :pretty-print    false}}
+;{:id           "min"
+;   :source-paths ["src/cljs"]
+;   :compiler     {:main            refame-transform.core
+;                  :output-to       "resources/public/js/compiled/app.js"
+;                  :optimizations   :advanced
+;                  :closure-defines {goog.DEBUG false}
+;                  :pretty-print    false}}
 
-    ]}
-  )
+] }
+)

@@ -1,4 +1,4 @@
-(ns noted.views.note-viewer
+(ns noted.views.preview-note
   (:require
     [noted.events.events-utils :refer [e>]]
     [noted.subs.subs :refer [<s]]
@@ -7,9 +7,9 @@
     [noted.utils.components :as comps]
     [re-frame.core :as rf]))
 
-(defn note-viewer []
-  [:div.note-viewer
-   [:div.top-bar [:h2.title (<s [:note-viewer/title])]
+(defn preview-note []
+  [:div.preview-note
+   [:div.top-bar [:h2.title (<s [:preview-note/title])]
     [:div.buttons
      [:input.search
       {:type     "button"
@@ -18,11 +18,11 @@
      [:input.edit
       {:type     "button"
        :value    "Edit >"
-       :on-click #(e> [:note-viewer/goto-editor])}]]]
+       :on-click #(e> [:preview-note/goto-editor])}]]]
    (into [:div.tags]
          (map (fn [t] [:a
-                       {:on-click #(e> [:note-viewer/search-for-tag t])}
+                       {:on-click #(e> [:preview-note/search-for-tag t])}
                        (str "#" t)])
-              (<s [:note-viewer/tags])))
+              (<s [:preview-note/tags])))
    [:div.content {:dangerouslySetInnerHTML
-                  {:__html (<s [:note-viewer/content])}}]])
+                  {:__html (<s [:preview-note/content])}}]])

@@ -9,9 +9,9 @@
             [noted.subs.subs :refer [<s]]
             [noted.repl]
             [re-pressed.core :as rp]
-            [noted.views.new-note-view :as new-note-view]
+            [noted.views.note-editor :as note-editor]
             [noted.views.search-view :as search-view]
-            [noted.views.note-viewer :as note-viewer]
+            [noted.views.preview-note :as preview-note]
             [re-frame.core :as rf]
             [cljsjs.fuse]
             [re-frame.core :as re-frame]))
@@ -21,6 +21,8 @@
 (def electron (js/require "electron"))
 (def ipc (.-ipcRenderer electron))
 (defn hide-self [] (.send ipc "message" ":hide"))
+(defn dispatch-pull-req-from-main [] (.send ipc "message" ":pull"))
+(defn dispatch-updated-notes [notes] (.send ipc "message" (str ":store" notes)))
 
 ;(defonce proc (js/require "child_process"))
 
@@ -35,11 +37,14 @@
   [:div#global-root.draggable-region
    (case (<s [:active-mode])
      :search [search-view/search-view]
-     :new-note [new-note-view/new-note-view]
-     :note-viewer [note-viewer/note-viewer])])
+     :new-note [note-editor/note-editor]
+     :preview-note [preview-note/preview-note])])
 
 
-(enable-re-frisk-remote! {:enable-re-frame-10x? true})
+(try
+  (enable-re-frisk-remote! {:enable-re-frame-10x? true})
+  (catch js/Error e
+    nil))
 
 (defn dev-setup []
   (enable-console-print!))
@@ -53,7 +58,8 @@
 (defn init-main-comms []
   (.on ipc "message" (fn [_ new-mode]
                        (println "msg->ui" new-mode)
-                       (e> [:receive-ipc-message new-mode]))))
+                       (e> [:receive-ipc-message new-mode])))
+  (dispatch-pull-req-from-main))
 
 (defn ^:export init []
   (rf/dispatch-sync [:reset-db])
@@ -66,7 +72,7 @@
   [::rp/set-keydown-rules
    {:event-keys [[[:handle-esc]
                   [{:keyCode 27}]]
-                 [[:note-viewer/maybe-edit]
+                 [[:preview-note/maybe-edit]
                   [{:keyCode 69                             ; E
                     :ctrlKey true}]]]
     ; esc

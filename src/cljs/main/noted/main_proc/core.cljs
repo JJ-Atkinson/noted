@@ -1,7 +1,9 @@
 (ns noted.main-proc.core
-  (:require [taoensso.timbre :as tmb]))
+  (:require [taoensso.timbre :as tmb]
+            [clojure.string :as str]))
 
 (def electron (js/require "electron"))
+(def fs (js/require "fs"))
 (def app (.-app electron))
 (def browser-window (.-BrowserWindow electron))
 (def crash-reporter (.-crashReporter electron))
@@ -10,8 +12,33 @@
 
 (def main-window (atom nil))
 
-(def last-opened-mode (atom :search))
 
+
+
+
+
+(tmb/debug "getPath document" (.getPath app "documents"))
+
+(def storage-file (str (.getPath app "documents") "/noted-store.edn"))
+(def storage-file-old (str (.getPath app "documents") "/noted-store.edn.old"))
+
+
+(defn get-stored-notes []
+  (if (.existsSync fs storage-file)
+    (str (.readFileSync fs storage-file))
+    "{}"))
+
+(defn dispatch-stored-notes []
+  (if-let [win ^js/electron.BrowserWindow @main-window]
+    (.send (.-webContents win)
+           "message"
+           (str "{:store " (get-stored-notes) "}"))))
+
+
+(defn store-notes [notes-str]
+  (when (.existsSync fs storage-file)
+    (.renameSync fs storage-file (str storage-file ".old")))
+  (.writeFileSync fs storage-file notes-str))
 
 
 (defn window-visible? []
@@ -19,22 +46,25 @@
     (.isVisible win)
     false))
 
-(defn send-mode-switch-message [mode]
+
+(defn send-mode-switch-message [mode visible?]
   (if-let [win ^js/electron.BrowserWindow @main-window]
-    (.send (.-webContents win) 
-           "message" 
-           (str {:mode mode
-                 :visible? (window-visible?)}))))
+    (.send (.-webContents win)
+           "message"
+           (str {:mode     mode
+                 :visible? visible?}))))
+
 
 (defn show-window [mode]
   (if-let [win ^js/electron.BrowserWindow @main-window]
-    (do (.show win)
-        (send-mode-switch-message mode))))
+    (let [vis? (window-visible?)]
+      (.show win)
+      (send-mode-switch-message mode vis?))))
+
 
 (defn hide-window []
   (if-let [win ^js/electron.BrowserWindow @main-window]
     (.hide win)))
-
 
 
 (defn init-browser []
@@ -49,7 +79,7 @@
   (.loadURL ^js/electron.BrowserWindow @main-window (str "file://" js/__dirname "/public/index.html"))
   #_(.on ^js/electron.BrowserWindow @main-window "closed" #(reset! main-window nil))
   #_(let [contents (. ^js/electron.BrowserWindow @main-window -webContents)]
-      (.on contents "did-finish-load" #(.send contents "message" "Hello window!")))
+      (.on contents "did-finish-load" #(dispatch-stored-notes)))
 
   #_(.minimize ^js/electron.BrowserWindow @main-window)
   (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search))
@@ -63,13 +93,20 @@
            :submitURL   "https://example.com/submit-url"
            :autoSubmit  false}))
 
-#_(.on app "window-all-closed" #(when-not (= js/process.platform "darwin")
+#_(.on app "window-all-closed" #(when-not (= js/process.platform"darwin")
                                   (.quit app)))
 (.on app "ready" init-browser)
 
 (.on app "will-quit" #(.unregisterAll global-shortcut))
 
 (.on ipc "message" (fn [_ e] (do (tmb/debug "msg->main" e)
-                                 (case e
-                                   ":hide" (hide-window)
-                                   :default nil))))
+                                 (cond
+                                   (= e ":hide")
+                                   (hide-window)
+                                   
+                                   (str/starts-with? e ":store")
+                                   (store-notes (apply str (drop 6 e)))
+                                   
+                                   (= e ":pull")
+                                   (dispatch-stored-notes)
+                                   :else (tmb/debug "forgot ipc message? " e)))))

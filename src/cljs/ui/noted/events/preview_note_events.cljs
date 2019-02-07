@@ -1,4 +1,4 @@
-(ns noted.events.note-viewer-events
+(ns noted.events.preview-note-events
   (:require [re-frame.core :as rf]
             [noted.utils.common :as uc]
             [noted.specs :as specs]
@@ -8,36 +8,36 @@
 
 
 (rf/reg-event-db
-  :note-viewer/set-id
+  :preview-note/set-id
   eu/default-interceptors
   (fn [db [id]]
-    (assoc-in db [:note-viewer :id] id)))
+    (assoc-in db [:preview-note :id] id)))
 
 
 (rf/reg-event-fx
-  :note-viewer/goto-id
+  :preview-note/goto-id
   eu/default-interceptors
   (fn [{:keys [event db]}]
-    {:dispatch-n [[:note-viewer/set-id (first event)]
-                  [:set-active-mode :note-viewer]]}))
+    {:dispatch-n [[:preview-note/set-id (first event)]
+                  [:set-active-mode :preview-note]]}))
 
 (rf/reg-event-fx
-  :note-viewer/goto-editor
+  :preview-note/goto-editor
   eu/default-interceptors
   (fn [{:keys [db]}]
-    {:dispatch [:new-note-view/begin-editing
-                (get-in db [:note-viewer :id])]}))
+    {:dispatch [:note-editor/begin-editing
+                (get-in db [:preview-note :id])]}))
 
 (rf/reg-event-fx
-  :note-viewer/maybe-edit
+  :preview-note/maybe-edit
   eu/default-interceptors
   (fn [{:keys [db]}]
-    (if (= :note-viewer (get-in db [:ui-common :mode]))
-      {:dispatch [:note-viewer/goto-editor]}
+    (if (= :preview-note (get-in db [:ui-common :mode]))
+      {:dispatch [:preview-note/goto-editor]}
       {})))
 
 (rf/reg-event-fx
-  :note-viewer/search-for-tag
+  :preview-note/search-for-tag
   eu/default-interceptors
   ; tag as text w/o the #
   (fn [{:keys [event db]}]
