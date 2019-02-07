@@ -16,6 +16,8 @@
             [cljsjs.fuse]
             [re-frame.core :as re-frame]))
 
+(def debug? true)
+
 (enable-console-print!)
 
 (def electron (js/require "electron"))

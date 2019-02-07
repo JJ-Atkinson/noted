@@ -7,15 +7,11 @@
             [noted.events.events-utils :as eu]))
 
 
-(rf/reg-event-db
-  :preview-note/set-id
-  eu/default-interceptors
-  (fn [db [id]]
-    (assoc-in db [:preview-note :id] id)))
+(eu/basic-event :preview-note/set-id [:preview-note :id])
 
 
 (rf/reg-event-fx
-  :preview-note/goto-id
+  :preview-note/set-and-open-id
   eu/default-interceptors
   (fn [{:keys [event db]}]
     {:dispatch-n [[:preview-note/set-id (first event)]

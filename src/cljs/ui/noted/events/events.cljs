@@ -14,7 +14,7 @@
   :receive-ipc-message
   eu/default-interceptors
   (fn [{:keys [event db]}]
-    (let [parsed (cljs.reader/read-string (tmb/spy (str (first event))))
+    (let [parsed (cljs.reader/read-string (str (first event)))
           current-mode (get-in db [:ui-common :mode])]
       (cond
         (contains? parsed :mode)
@@ -22,22 +22,17 @@
                (when (and (= (:mode parsed) current-mode)
                           (:visible? parsed))
                  {:hide-window nil}))
+
         (contains? parsed :store)
-        {:dispatch [:update-note-store (:store parsed)]})
+        {:dispatch [:update-note-store (:store parsed)]}
+
+        :else
+        (tmb/error "unexpected message: " parsed))
       )))
 
-(rf/reg-event-db
-  :update-note-store
-  eu/default-interceptors
-  (fn [db [new-store]]
-    (tmb/debug "new notes from store" new-store)
-    (assoc-in db [:ui-common :notes] new-store)))
 
-(rf/reg-event-db
-  :set-active-mode
-  eu/default-interceptors
-  (fn [db [mode]]
-    (assoc-in db [:ui-common :mode] mode)))
+(eu/basic-event :update-note-store [:ui-common :notes])
+(eu/basic-event :set-active-mode [:ui-common :mode])
 
 
 (rf/reg-event-fx

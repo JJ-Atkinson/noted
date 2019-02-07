@@ -32,13 +32,13 @@
 (defn editor [& opts]
   ":class :default-value :type :on-change-time :placeholder :key :on-change"
   (let [{:keys [class on-change default-value type placeholder key autofocus]}
-        (merge default-editor-opts
-               (uc/parse-opts opts default-editor-opts ::editor-opts))]
+          (uc/parse-opts opts default-editor-opts ::editor-opts)]
     (r/create-class
       {:display-name   "dynamic-text-area"
        :reagent-render (fn [] [type
                                (merge
-                                 {:class       class
+                                 {:key key
+                                  :class       class
                                   :on-change   #(on-change (.-value (.-target %)))
                                   :value       (if (string? default-value)
                                                  default-value
