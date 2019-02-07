@@ -9,15 +9,15 @@
 
 
 (defn render-tags [tags]
-  (into [:div.tags] (map (fn [tag]
-                           [:a
-                            {:on-click (fn [e]
-                                         (tmb/debug e)
-                                         (.stopPropagation e)
-                                         (e> [:search-view/insert-tag-into-search tag])
-                                         true)}
-                            (str "#" tag) ])
-                         tags)))
+  [:div.tags (map (fn [tag]
+                    [:a
+                     {:on-click (fn [e]
+                                  (tmb/debug e)
+                                  (.stopPropagation e)
+                                  (e> [:search-view/insert-tag-into-search tag])
+                                  true)}
+                     (str "#" tag)])
+                  tags)])
 
 (defn search-view []
   [:div.search-view
@@ -28,10 +28,14 @@
     :default-value (rf/subscribe [:search-view/query-string])
     :class "search"
     :placeholder "#tag fuzzy search"]
-   (into [:div.results] (map (fn [note]
-                               [:div 
-                                {:on-click #(e> [:note-viewer/goto-id (:id note)])}
-                                [:span.title (:title note)]
-                                [:p.content (:content note)]
-                                [render-tags (:tags note)]])
-                             (<s [:search-view/query-results])))])
+   [
+    
+    
+    :div.results (map (fn [note]
+                        [:div
+                         {:on-click #(e> [:preview-note/goto-id (:id note)])
+                          :key      (str (:id note))}
+                         [:span.title (:title note)]
+                         [:p.content (:content note)]
+                         [render-tags (:tags note)]])
+                      (<s [:search-view/query-results]))]])

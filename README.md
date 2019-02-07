@@ -14,4 +14,12 @@ We have 2 builds, ui and electron main. UI pulls from both the `/cljs/ui` and `/
 todo:
 
  - Create and validate `-min` builds.
- 
+ - Package the app.
+ - Add pinned notes feature.
+ - Add tools to enable note to be inserted into another.
+   - Optionally, maybe just bake a collector note. 
+ - Convert the note storage mechanism to use :id internally.
+ - Research the incorporation of finite state machines or behavior trees.
+ - Trim nicely the preview in search view & render the MD.
+ - Save the notes.
+ - Add arrow key functionality to search view.

@@ -4,7 +4,7 @@
 #app, body, #global-root, html {
   margin: 0;
   padding: 0;
-  
+
 }
 
 *:focus {
@@ -15,20 +15,28 @@ a {
   color: darken(#03A9F4, 10%);
 }
 
-#global-root {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  font-size: 16px;
-  font-family: Roboto, Segoe UI, sans-serif;
-  border: 5px solid @bright-purple;
+#app {
   border-top: 25px solid @bright-purple;
-  background: transparent;
   -webkit-app-region: drag;
-  
+
   * {
     -webkit-app-region: none;
   }
+
+  height: 100vh;
+  width: 100vw;
+}
+
+#global-root {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  font-size: 16px;
+  font-family: Roboto, Segoe UI, sans-serif;
+  border: 5px solid @bright-purple;
+  border-top: 0px solid @bright-purple;
+  background: transparent;
+
 }
 
 //#global-root 
@@ -46,7 +54,7 @@ input:not([type="button"]), textarea {
 }
 
 input:focus, textarea:focus {
-  border: 6px solid @dark-purple !important;
+  border: 8px solid @dark-purple !important;
 }
 
 input[type="button"] {
@@ -78,6 +86,7 @@ input[type="button"]:hover, input[type="button"]:focus {
   //overflow-y: paged-y;
   display: flex;
   flex-direction: column;
+
   .search {
 
     font-size: 1.5em;
@@ -86,8 +95,8 @@ input[type="button"]:hover, input[type="button"]:focus {
     border-right: none !important;
     width: 100%;
   }
-  
-  
+
+
   .results {
     overflow-y: auto;
   }
@@ -127,7 +136,7 @@ input[type="button"]:hover, input[type="button"]:focus {
 
 }
 
-.new-note-view {
+.note-editor {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -162,53 +171,58 @@ input[type="button"]:hover, input[type="button"]:focus {
 
 }
 
-.new-note-view * {
+.note-editor * {
   flex: 1;
   width: 100% !important;
 }
 
-.note-viewer {
+.preview-note {
   display: flex;
   flex-direction: column;
 
   margin-left: 1.2em;
-  
+
   .top-bar {
     //background-color: red;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
-    
+
     .title {
       width: 100% - 30em;
     }
-    
+
     .buttons {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
       padding: 0;
       margin: 0;
+
       .search, .edit {
         min-height: 2.7em;
       }
-      
+
       .search {
         border-radius: 0 0 0 5px;
         border-right: 1px solid @dark-purple;
       }
     }
   }
-  
-  .tags a {
-    margin-right: 0.6em;
-    cursor: default;
+
+  .tags {
+    margin-top: 0.5em;
+    a {
+      margin-right: 0.6em;
+      cursor: default;
+    }
   }
-  
+
   .content {
     margin-top: 1.5em;
     overflow-y: auto;
+    padding-right: 1.2em;
   }
 }
 
@@ -217,4 +231,9 @@ pre {
   border: none;
   margin: 0;
   padding: 0;
+
+  .hljs {
+    border: none;
+    border-radius: 0;
+  }
 }

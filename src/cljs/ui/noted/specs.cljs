@@ -29,31 +29,42 @@
                          :search-view
                          :tracks-view})
 
+(defn note-map? [note-map]
+  true #_(and
+    (map? note-map)
+    (reduce clojure.core/and
+            (map (fn [k v]
+                   (and (s/valid? ::note v)
+                        (= k (:id v))))
+                 note-map))))
+
 (s/def ::mode #{:new-note
-                :note-viewer
+                :preview-note
                 :search})
 
-(defn not-whitespace [s]
+(defn not-whitespace? [s]
   (and (string? s)
        (not (empty? (str/trim s)))))
 
 
-(s/def :note/title string?)
-(s/def :note/content string?)
+(s/def :note/title not-whitespace?)
+(s/def :note/content not-whitespace?)
 (s/def :note/tags (s/coll-of string?))
+(s/def :note/id int?)
 (s/def ::note (s/keys :req-un [:note/title
                                :note/content
-                               :note/tags]
+                               :note/tags
+                               :note/id]
                       :opt-un []))
 
 
-(s/def ::notes (s/coll-of ::note))
+(s/def ::notes note-map?)
 
-(s/def :note-form/title not-whitespace)
-(s/def :note-form/content not-whitespace)
-(s/def :note-form/tags (partial s/valid? :note/tags))
-(s/def ::note-form (s/keys :req-un [:note-form/title
-                                    :note-form/content
+(s/def :note-form/tags not-whitespace?)
+(s/def ::note-form (s/keys :req-un [
+                                    :note/id
+                                    :note/title
+                                    :note/content
                                     :note-form/tags]
                            :opt-un []))
 
@@ -67,31 +78,31 @@
                                     ]))
 
 
-(s/def ::new-note-view (s/keys :req-un []))
+(s/def ::note-editor (s/keys :req-un [::note-form]))
 
-(s/def ::db-spec (s/keys :req-un [::new-note-view
+(s/def ::db-spec (s/keys :req-un [::note-editor
                                   ::ui-common
                                   ::search-view]
                          :opt-un []))
 
 
 (s/def ::id int?)
-(s/def ::note-viewer (s/keys :req-un [::id]))
+(s/def ::preview-note (s/keys :req-un [::id]))
 
-(def default-note-view-form {:id -1
+(def default-note-editor-form {:id -1
                              :content ""
                              :title ""
                              :tags ""})
 
-(def default-db {:note-viewer   {:id 0}
-                 :new-note-view {:note-form default-note-view-form}
+(def default-db {:preview-note   {:id 0}
+                 :note-editor {:note-form default-note-editor-form}
                  :search-view   {:query ""}
                  :ui-common     {:mode  :new-note
-                                 :notes [{
+                                 :notes [#_{
                                           :title   "Where to locate lein"
                                           :content "`which lein`"
                                           :tags    ["bash" "tools"]}
-                                         {
+                                         #_{
                                           :title   "Profiles in lein"
                                           :content "Profiles override arbitrary values in the base of 
           `defproject`. They can be used on any command with `lein with-profile [name] ...`"

@@ -18,7 +18,7 @@
   (str/replace query tag-regex ""))
 
 (defn keep-sorted [notes ids]
-  (map #(get (into [] notes) %) ids))
+  (map #(get notes %) ids))
 
 (defn fuse-search [clear-query notes js-notes]
   (let [opts {:keys     [{:name   "title"
@@ -36,7 +36,7 @@
             (uc/any-? true? (for [rtag (:tags n)
                                   ptag tags]
                               (str/starts-with? rtag ptag))))
-          notes))
+          (vals notes)))
 
 (defn search [query notes js-notes]
   (let [tags (map clear-first-char (grab-tags query))
