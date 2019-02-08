@@ -89,8 +89,8 @@ input[type="button"]:hover, input[type="button"]:focus {
 
   .search {
 
-    font-size: 1.5em;
-    height: 2.5em;
+    font-size: 1.3em;
+    min-height: 2.1em;
     border-left: none !important;
     border-right: none !important;
     width: 100%;
@@ -189,9 +189,28 @@ input[type="button"]:hover, input[type="button"]:focus {
     justify-content: space-between;
     align-items: flex-start;
 
-    .title {
+    .left {
+      display: flex;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
       width: 100% - 30em;
+      margin: 1.5em 0 0.6em 0;
+      
+      .title {
+        margin: 0;
+      }
+      
+      .hint {
+        background: #eee;
+        border-radius: 0.3em;
+        margin-left: 1.2em;
+        padding: 0.4em;
+        font-family: "Ubuntu Mono";
+        font-weight: bold;
+      }
     }
+    
 
     .buttons {
       display: flex;

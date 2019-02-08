@@ -15,7 +15,8 @@
                                   (tmb/debug e)
                                   (.stopPropagation e)
                                   (e> [:search-view/insert-tag-into-search tag])
-                                  true)}
+                                  true)
+                      :key tag}
                      (str "#" tag)])
                   tags)])
 
