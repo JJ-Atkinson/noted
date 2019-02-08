@@ -18,7 +18,7 @@
   (str/replace query tag-regex ""))
 
 (defn keep-sorted [notes ids]
-  (map #(get notes %) ids))
+  (into {} (map (fn [id] [id (get notes id)]) ids)))
 
 (defn fuse-search [clear-query notes js-notes]
   (let [opts {:keys     [{:name   "title"
@@ -28,15 +28,16 @@
               :tokenize true
               :id       "id"}
         fuse (js/Fuse. js-notes (clj->js opts))
-        ids (js->clj (.search fuse clear-query))]
+        ids (js->clj (.search fuse clear-query))
+        ]
     (keep-sorted notes ids)))
 
 (defn filter-by-tags [notes tags]
-  (filter (fn [n]
+  (filter (fn [[_ n]]
             (uc/any-? true? (for [rtag (:tags n)
                                   ptag tags]
                               (str/starts-with? rtag ptag))))
-          (vals notes)))
+          notes))
 
 (defn search [query notes js-notes]
   (let [tags (map clear-first-char (grab-tags query))
@@ -44,7 +45,7 @@
         text-results (if (empty? clean-query)
                        notes
                        (fuse-search clean-query notes js-notes))
-        tag-results (if (empty? tags)
+        tag-results (if (tmb/spy (empty? tags))
                       text-results
                       (filter-by-tags text-results tags))]
     tag-results))

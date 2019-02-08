@@ -21,14 +21,6 @@
   (rf/after (partial check-and-throw ::db-spec)))
 
 
-(defn note-map? [note-map]
-  (and
-    (map? note-map)
-    (every? true? (map (fn [[k v]]
-                         (and (s/valid? ::note v)
-                              (= k (:id v))))
-                       note-map))))
-
 
 (s/def ::mode #{:new-note
                 :preview-note
@@ -39,26 +31,28 @@
        (not (empty? (str/trim s)))))
 
 
+(s/def :note/id int?)
+(s/def :note/tags (s/coll-of not-whitespace?))
 (s/def :note/title not-whitespace?)
 (s/def :note/content not-whitespace?)
-(s/def :note/tags (s/coll-of not-whitespace?))
-(s/def :note/id int?)
-(s/def ::note (s/keys :req-un [:note/title
+(s/def ::note (s/keys :req-un [:note/id
+                               :note/title
                                :note/content
-                               :note/tags
-                               :note/id]
-                      :opt-un []))
+                               :note/tags]))
+
+(s/def ::notes (s/and #(s/valid? (s/coll-of ::note) (vals %))
+                      (fn k-id-v-id-match [note-map]
+                        (every? (fn [[k v]] (= k (:id v))) note-map))))
 
 
-(s/def ::notes note-map?)
+(s/def :note-form/title string?)
+(s/def :note-form/content string?)
+(s/def :note-form/tags string?)
 
-(s/def :note-form/tags not-whitespace?)
-(s/def ::note-form (s/keys :req-un [
-                                    :note/id
-                                    :note/title
-                                    :note/content
-                                    :note-form/tags]
-                           :opt-un []))
+(s/def ::note-form (s/keys :req-un [:note/id
+                                    :note-form/title
+                                    :note-form/content
+                                    :note-form/tags]))
 
 (s/def ::query string?)
 

@@ -9,7 +9,10 @@
 
 (defn preview-note []
   [:div.preview-note
-   [:div.top-bar [:h2.title (<s [:preview-note/title])]
+   [:div.top-bar
+    [:div.left
+     [:h2.title (<s [:preview-note/title])]
+     [:span.hint (<s [:preview-note/see-insertion-tag])]]
     [:div.buttons
      [:input.search
       {:type     "button"
