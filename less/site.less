@@ -206,7 +206,7 @@ input[type="button"]:hover, input[type="button"]:focus {
         border-radius: 0.3em;
         margin-left: 1.2em;
         padding: 0.4em;
-        font-family: "Ubuntu Mono";
+        font-family: "Ubuntu Mono", monospace;
         font-weight: bold;
       }
     }
@@ -225,7 +225,7 @@ input[type="button"]:hover, input[type="button"]:focus {
 
       .search {
         border-radius: 0 0 0 5px;
-        border-right: 1px solid @dark-purple;
+        border-right: 1px solid average(@bright-purple, @dark-purple);
       }
     }
   }
@@ -245,13 +245,15 @@ input[type="button"]:hover, input[type="button"]:focus {
   }
 }
 
+
 pre {
   background: none;
   border: none;
   margin: 0;
   padding: 0;
 
-  .hljs {
+  code.hljs {
+    padding: 1.5em;
     border: none;
     border-radius: 0;
   }
