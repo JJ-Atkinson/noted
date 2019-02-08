@@ -1,3 +1,7 @@
+![alt text](github/images/NewNote.png)
+![alt text](github/images/NoteViewer.png)
+
+
 Commands to start dev environment 
 
 ```bash
