@@ -1,6 +1,9 @@
 (ns noted.events.fsm
   (:require [re-frame.core :as rf]
-            [taoensso.timbre :as tmb]))
+            [taoensso.timbre :as tmb]
+            [noted.events.search-view-events :as sve]
+            [noted.events.note-editor-events :as nee]
+            [noted.events.preview-note-events :as pne]))
 
 ; this will not be a complete implementation of a finite state machine. It
 ; will only govern inter-state transitions. anything that is constrained to
@@ -12,7 +15,8 @@
 ; general naming.
 
 ; machine {:state {:transition-name action}}
-; cofx map is the map of possible injected data from reg-event-fx
+; cofx map is the map of possible injected data from reg-event-fx, 
+; (typically containing the db and the event map under :db and :event)
 ; collected-fx is the name of things that will be returned to reg-event-fx
 ; a result of :fsm/failure will return an empty collected-fx and do nothing
 ; an action may be composed easily, or can also be used raw. the args will
@@ -78,8 +82,7 @@
                   :note-editor  (state-transition :note-editor)
                   :search-tag   (compose
                                   (state-transition :search-view)
-                                  ;(change-tag-search)
-                                  )
+                                  sve/change-tag-search)
                   :edit-preview (compose
                                   (state-transition :note-editor)
                                   ;(copy-preview-note-form)
@@ -112,9 +115,9 @@
                                  ;(hide-fx)
                                  )
                   :search-view (state-transition :search-view)}
-   :hidden       {:search-view  (state-transition :search-view)
-                  :note-editor  (state-transition :note-editor)}
-   :pinned       {:esc (dispose-window)}
+   :hidden       {:search-view (state-transition :search-view)
+                  :note-editor (state-transition :note-editor)}
+   :pinned       {:esc nil #_(dispose-window)}
    })
 
 
@@ -122,7 +125,7 @@
   "take the current state from :db in cofx-map and invoke the transition.
   if the transition fails, no change is applied and we throw errors to the console"
   [transition cofx-map]
-  (let [curr-state (get-in cofx-map [:db :mode])
+  (let [curr-state (get-in cofx-map [:db :ui-common :mode])
         transitions-map (get machine curr-state)
         action (get transitions-map transition)
         res (action cofx-map)]

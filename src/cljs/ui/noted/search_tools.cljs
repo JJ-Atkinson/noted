@@ -28,18 +28,17 @@
               :tokenize true
               :id       "id"}
         fuse (js/Fuse. js-notes (clj->js opts))
-        ids (js->clj (.search fuse clear-query))
-        ]
+        ids (js->clj (.search fuse clear-query))]
     (keep-sorted notes ids)))
 
 (defn filter-by-tags [notes tags]
   (filter (fn [[_ n]]
-            #_(every?
+            (every?
               (fn [t]
                 (uc/any-? #(str/starts-with? % t) (:tags n)))
               tags)
             
-            (uc/any-? true? (for [rtag (:tags n)
+            #_(uc/any-? true? (for [rtag (:tags n)
                                   ptag tags]
                               (str/starts-with? rtag ptag))))
           notes))

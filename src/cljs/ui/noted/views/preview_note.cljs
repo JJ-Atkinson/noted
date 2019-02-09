@@ -17,14 +17,14 @@
      [:input.search
       {:type     "button"
        :value    "< Search"
-       :on-click #(e> [:set-active-mode :search-view)}]
+       :on-click #(e> [:search-view/goto-view])}]
      [:input.edit
       {:type     "button"
        :value    "Edit >"
        :on-click #(e> [:preview-note/goto-editor])}]]]
    (into [:div.tags]
          (map (fn [t] [:a
-                       {:on-click #(e> [:preview-note/search-for-tag t])}
+                       {:on-click #(e> [:search-view/goto-view-with-search t])}
                        (str "#" t)])
               (<s [:preview-note/tags])))
    [:div.content {:dangerouslySetInnerHTML

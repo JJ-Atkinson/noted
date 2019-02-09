@@ -16,3 +16,9 @@
         (assoc-in db [:search-view :query]
                   (str "#" tag " " curr-query))
         db))))
+
+
+
+
+(defn change-tag-search [cofx collected-fx]
+  (assoc-in collected-fx [:db :search-view :query] (get-in cofx [:event 0])))

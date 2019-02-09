@@ -37,7 +37,7 @@
 
 (defn store-notes [notes-str]
   (when (.existsSync fs storage-file)
-    (.renameSync fs storage-file (str storage-file ".old")))
+    (.renameSync fs storage-file storage-file-old))
   (.writeFileSync fs storage-file notes-str))
 
 
@@ -75,6 +75,7 @@
                                   :resizable true
                                   :frame     false
                                   })))
+  
   ; Path is relative to the compiled js file (main.js in our case)
   (.loadURL ^js/electron.BrowserWindow @main-window (str "file://" js/__dirname "/public/index.html"))
   #_(.on ^js/electron.BrowserWindow @main-window "closed" #(reset! main-window nil))
@@ -83,7 +84,7 @@
 
   #_(.minimize ^js/electron.BrowserWindow @main-window)
   (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search-view)
-  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :note-editor)))
+  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :note-editor))))
 
 ; CrashReporter can just be omitted
 (.start crash-reporter
