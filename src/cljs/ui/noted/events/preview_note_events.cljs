@@ -32,11 +32,4 @@
       {:dispatch [:preview-note/goto-editor]}
       {})))
 
-(rf/reg-event-fx
-  :preview-note/search-for-tag
-  eu/default-interceptors
-  ; tag as text w/o the #
-  (fn [{:keys [event db]}]
-    {:dispatch-n [[:search-view/update-search-query (str "#" (first event))]
-                  [:set-active-mode :search-view]}))
 

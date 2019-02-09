@@ -37,10 +37,11 @@
 
 (defn root-component []
   [:div#global-root.draggable-region
-   (case (<s [:active-mode])
+   (case (tmb/spy (<s [:active-mode]))
      :search-view [search-view/search-view]
      :note-editor [note-editor/note-editor]
-     :preview-note [preview-note/preview-note])])
+     :preview-note [preview-note/preview-note]
+     nil)])
 
 
 (try

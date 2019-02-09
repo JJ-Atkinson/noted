@@ -4,9 +4,6 @@
             [clojure.string :as str]
             [taoensso.timbre :as tmb]
             [cljs.spec.alpha :as s]
-            [noted.events.note-editor-events]
-            [noted.events.search-view-events]
-            [noted.events.preview-note-events]
             [noted.utils.common :as uc]
             [noted.events.events-utils :as eu]
             [noted.events.fsm :as fsm]))
@@ -42,7 +39,7 @@
   (fn [{:keys [event db]}]
     (let [mode (tmb/spy (get-in db [:ui-common :mode]))]
       {:dispatch-n  [(when (= mode :note-editor) [:note-editor/clear-form])
-                     (when (= mode :search-view [:search-view/update-search-query ""])]
+                     (when (= mode :search-view [:search-view/update-search-query ""]))]
        :hide-window nil})))
 
 (rf/reg-event-fx
@@ -58,3 +55,16 @@
 (rf/reg-fx
   :update-notes-fn
   (fn [notes] (noted.core/dispatch-updated-notes notes)))
+
+
+
+
+(rf/reg-event-fx
+  :search-view/goto-view
+  eu/default-interceptors
+  (fsm/fx-handler :search-view))
+
+(rf/reg-event-fx
+  :search-view/goto-view-with-search
+  eu/default-interceptors
+  (fsm/fx-handler :search-tag))
