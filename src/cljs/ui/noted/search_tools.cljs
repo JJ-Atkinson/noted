@@ -34,6 +34,11 @@
 
 (defn filter-by-tags [notes tags]
   (filter (fn [[_ n]]
+            #_(every?
+              (fn [t]
+                (uc/any-? #(str/starts-with? % t) (:tags n)))
+              tags)
+            
             (uc/any-? true? (for [rtag (:tags n)
                                   ptag tags]
                               (str/starts-with? rtag ptag))))
@@ -45,7 +50,7 @@
         text-results (if (empty? clean-query)
                        notes
                        (fuse-search clean-query notes js-notes))
-        tag-results (if (tmb/spy (empty? tags))
+        tag-results (if (empty? tags)
                       text-results
                       (filter-by-tags text-results tags))]
     tag-results))

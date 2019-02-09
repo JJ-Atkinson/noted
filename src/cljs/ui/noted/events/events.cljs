@@ -8,7 +8,8 @@
             [noted.events.search-view-events]
             [noted.events.preview-note-events]
             [noted.utils.common :as uc]
-            [noted.events.events-utils :as eu]))
+            [noted.events.events-utils :as eu]
+            [noted.events.fsm :as fsm]))
 
 (rf/reg-event-fx
   :receive-ipc-message
@@ -40,8 +41,8 @@
   eu/default-interceptors
   (fn [{:keys [event db]}]
     (let [mode (tmb/spy (get-in db [:ui-common :mode]))]
-      {:dispatch-n  [(when (= mode :new-note) [:note-editor/clear-form])
-                     (when (= mode :search) [:search-view/update-search-query ""])]
+      {:dispatch-n  [(when (= mode :note-editor) [:note-editor/clear-form])
+                     (when (= mode :search-view [:search-view/update-search-query ""])]
        :hide-window nil})))
 
 (rf/reg-event-fx

@@ -38,8 +38,8 @@
 (defn root-component []
   [:div#global-root.draggable-region
    (case (<s [:active-mode])
-     :search [search-view/search-view]
-     :new-note [note-editor/note-editor]
+     :search-view [search-view/search-view]
+     :note-editor [note-editor/note-editor]
      :preview-note [preview-note/preview-note])])
 
 

@@ -82,8 +82,8 @@
       (.on contents "did-finish-load" #(dispatch-stored-notes)))
 
   #_(.minimize ^js/electron.BrowserWindow @main-window)
-  (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search))
-  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :new-note)))
+  (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search-view)
+  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :note-editor)))
 
 ; CrashReporter can just be omitted
 (.start crash-reporter

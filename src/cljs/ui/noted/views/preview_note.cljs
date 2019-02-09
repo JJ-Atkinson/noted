@@ -17,7 +17,7 @@
      [:input.search
       {:type     "button"
        :value    "< Search"
-       :on-click #(e> [:set-active-mode :search])}]
+       :on-click #(e> [:set-active-mode :search-view)}]
      [:input.edit
       {:type     "button"
        :value    "Edit >"
