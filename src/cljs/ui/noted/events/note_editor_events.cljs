@@ -60,8 +60,8 @@
   :note-editor/begin-editing
   eu/default-interceptors
   ; takes an id
-  (fn [{:keys [event db]}]
+  (fn [{:keys [event]}]
     {:dispatch-n [[:note-editor/copy-note (first event)]
-                  [:set-active-mode :new-note]]}))
+                  [:set-active-mode :note-editor]]}))
 
 

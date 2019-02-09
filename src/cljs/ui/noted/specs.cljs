@@ -22,9 +22,9 @@
 
 
 
-(s/def ::mode #{:new-note
+(s/def ::mode #{:note-editor
                 :preview-note
-                :search})
+                :search-view)
 
 (defn not-whitespace? [s]
   (and (string? s)
@@ -83,7 +83,7 @@
 (def default-db {:preview-note {:id 0}
                  :note-editor  {:note-form default-note-editor-form}
                  :search-view  {:query ""}
-                 :ui-common    {:mode  :new-note
+                 :ui-common    {:mode  :note-editor
                                 :notes [#_{
                                            :title   "Where to locate lein"
                                            :content "`which lein`"

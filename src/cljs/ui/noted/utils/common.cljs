@@ -9,8 +9,8 @@
   ([pred xs]
    (loop [nxs xs]
      (cond
-       (pred (first nxs)) true
        (empty? nxs) false
+       (pred (first nxs)) true
        :else (recur (rest nxs)))))
   ([xs] (any-? some? xs)))
 
