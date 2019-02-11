@@ -1,7 +1,9 @@
 (ns noted.events.search-view-events
   (:require [re-frame.core :as rf]
             [noted.events.events-utils :as eu]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [noted.events.fsm :refer [unwrap-db]]
+            [taoensso.timbre :as tmb]))
 
 
 
@@ -22,3 +24,6 @@
 
 (defn change-tag-search [cofx collected-fx]
   (assoc-in collected-fx [:db :search-view :query] (get-in cofx [:event 0])))
+
+(def clear-search-query (unwrap-db #(assoc-in % [:search-view :query] "")))
+
