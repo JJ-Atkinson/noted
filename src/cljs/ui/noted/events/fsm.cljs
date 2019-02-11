@@ -40,7 +40,7 @@
           (reduce (fn [collected-fx action]
                     (if (not= :fsm/failure collected-fx)
                       (action cofx-map collected-fx)
-                      collected-fx))
+                      :fsm/failure))
                   {} actions)]
       (if (= result :fsm/failure)
         (do (tmb/error "fsm event failure " actions)
@@ -54,11 +54,14 @@
   [f]
   (fn fsm-unwrap-db
     ([cofx collected-fx]
-     (if (contains? collected-fx :db)
-       (update collected-fx :db f)
-       (assoc collected-fx :db (f (:db cofx)))))
+     (let [ret (if (contains? collected-fx :db)
+                 (update collected-fx :db f)
+                 (assoc collected-fx :db (f (:db cofx))))]
+       (if (= (:db ret) :fsm/failure)
+         :fsm/failure
+         ret)))
     ([cofx]
-     {:db (f (:db cofx))})))
+     (fsm-unwrap-db cofx {:db (:db cofx)}))))
 
 
 (defn state-transition
@@ -67,7 +70,7 @@
   (unwrap-db (fn fsm-state-trans [db] (assoc-in db path new-state))))
 
 
-(defn ident-and-warn [cofx-map] 
+(defn ident-and-warn [cofx-map]
   (tmb/warn "got cofx map that cannot be transitioned from. " cofx-map)
   {})
 
