@@ -8,6 +8,7 @@
             [noted.events.events-utils :as eu]))
 
 
+
 (defn change-preview-id
   "takes the :id from the event map and changes the preview to match"
   [cofx collected-fx]
