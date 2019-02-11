@@ -4,32 +4,22 @@
             [noted.specs :as specs]
             [taoensso.timbre :as tmb]
             [cljs.spec.alpha :as s]
+            [noted.events.fsm :refer [unwrap-db]]
             [noted.events.events-utils :as eu]))
 
 
-(eu/basic-event :preview-note/set-id [:preview-note :id])
+(defn change-preview-id
+  "takes the :id from the event map and changes the preview to match"
+  [cofx collected-fx]
+  (assoc-in collected-fx [:db :preview-note :id]
+            (get-in cofx [:event 0])))
 
 
-(rf/reg-event-fx
-  :preview-note/set-and-open-id
-  eu/default-interceptors
-  (fn [{:keys [event db]}]
-    {:dispatch-n [[:preview-note/set-id (first event)]
-                  [:set-active-mode :preview-note]]}))
+; todo belongs in note-editor
+(defn move-id-into-editor [db id]
+  (assoc-in db [:note-editor :note-form]
+            (-> (get-in db [:ui-common :notes id])
+                (update :tags uc/stringify-tags))))
 
-(rf/reg-event-fx
-  :preview-note/goto-editor
-  eu/default-interceptors
-  (fn [{:keys [db]}]
-    {:dispatch [:note-editor/begin-editing
-                (get-in db [:preview-note :id])]}))
-
-(rf/reg-event-fx
-  :preview-note/maybe-edit
-  eu/default-interceptors
-  (fn [{:keys [db]}]
-    (if (= :preview-note (get-in db [:ui-common :mode]))
-      {:dispatch [:preview-note/goto-editor]}
-      {})))
-
-
+(def copy-preview-note-form 
+  (unwrap-db #(move-id-into-editor % (get-in % [:preview-note :id]))))

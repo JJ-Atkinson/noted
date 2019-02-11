@@ -29,7 +29,7 @@
   :<- [:all-notes-processed]
   (fn [all-notes _]
     ; simplifies life in the search function
-    (clj->js  (vals (tmb/spy all-notes)))))
+    (clj->js  (vals all-notes))))
 
 (rf/reg-sub
   :search-view/query-results

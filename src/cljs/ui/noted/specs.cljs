@@ -24,7 +24,9 @@
 
 (s/def ::mode #{:note-editor
                 :preview-note
-                :search-view})
+                :search-view
+                :pinned
+                :hidden})
 
 (defn not-whitespace? [s]
   (and (string? s)

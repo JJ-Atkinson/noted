@@ -4,9 +4,8 @@
             [noted.specs :as specs]
             [taoensso.timbre :as tmb]
             [cljs.spec.alpha :as s]
+            [noted.events.fsm :refer [unwrap-db]]
             [noted.events.events-utils :as eu]))
-
-
 
 
 
@@ -15,53 +14,30 @@
 (eu/basic-event :note-editor/update-form-tags [:note-editor :note-form :tags])
 
 
-
-(rf/reg-event-db
-  :note-editor/submit-note
-  eu/default-interceptors
-  (fn [db []]
-    (assoc-in db [:ui-common :notes]
-              (let [note-form (-> db
-                                  (get-in [:note-editor :note-form])
-                                  (update :tags uc/process-tag-str))
-                    old-notes (get-in db [:ui-common :notes])
-                    id (if (= -1 (:id note-form))
-                         (eu/gen-id (keys (get-in db [:ui-common :notes])))
-                         (:id note-form))]
-                (if (not (s/valid? :noted.specs/note note-form))
-                  (do (tmb/error "did not submit form, because it isn't conformal to ::note. " note-form) old-notes)
-                  (assoc old-notes id (assoc note-form :id id)))))))
-
-(rf/reg-event-db
-  :note-editor/clear-form
-  eu/default-interceptors
-  (fn [db []]
-    (assoc-in db [:note-editor :note-form] specs/default-note-editor-form)))
+(def submit-note 
+  (unwrap-db (fn [db]
+   (let [note-form (-> db
+                       (get-in [:note-editor :note-form])
+                       (update :tags uc/process-tag-str))
+         old-notes (get-in db [:ui-common :notes])
+         id (if (= -1 (:id note-form))
+              (eu/gen-id (keys (get-in db [:ui-common :notes])))
+              (:id note-form))
+         new-notes (assoc old-notes id (assoc note-form :id id))]
+     
+     (if (not (s/valid? :noted.specs/note note-form))
+       (do (tmb/error
+             "did not submit form, because it isn't conformal to ::note. "
+             note-form)
+           :fsm/failure)
+       (assoc-in db [:ui-common :notes] new-notes))))))
 
 
-(rf/reg-event-fx
-  :note-editor/submit-note-form
-  eu/default-interceptors
-  (fn [{:keys [db]}]
-    {:dispatch-n  [[:note-editor/submit-note]
-                   [:note-editor/clear-form]
-                   [:dispatch-updated-notes]]
-     :hide-window nil}))
+(def clear-editor (unwrap-db 
+  #(assoc-in % [:note-editor :note-form]
+             specs/default-note-editor-form)))
 
-(rf/reg-event-db
-  :note-editor/copy-note
-  eu/default-interceptors
-  (fn [db [id]]
-    (assoc-in db [:note-editor :note-form]
-              (-> (get-in db [:ui-common :notes id])
-                  (update :tags uc/stringify-tags)))))
-
-(rf/reg-event-fx
-  :note-editor/begin-editing
-  eu/default-interceptors
-  ; takes an id
-  (fn [{:keys [event]}]
-    {:dispatch-n [[:note-editor/copy-note (first event)]
-                  [:set-active-mode :note-editor]]}))
-
-
+(defn dispatch-update-notes 
+  "take the current notes in memory and send them to the main proc for storage"
+  [cofx collected-fx]
+  (merge collected-fx {:update-notes-fn (get-in (:db cofx) [:ui-common :notes])}))

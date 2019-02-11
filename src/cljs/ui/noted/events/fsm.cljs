@@ -1,9 +1,8 @@
 (ns noted.events.fsm
   (:require [re-frame.core :as rf]
             [taoensso.timbre :as tmb]
-            [noted.events.search-view-events :as sve]
-            [noted.events.note-editor-events :as nee]
-            [noted.events.preview-note-events :as pne]))
+            [noted.events.common-transitions :as ct]
+            ))
 
 ; this will not be a complete implementation of a finite state machine. It
 ; will only govern inter-state transitions. anything that is constrained to
@@ -64,83 +63,34 @@
 
 (defn state-transition
   "can be used by itself or as part of compose"
-  [new-state]
-  (unwrap-db (fn fsm-state-trans [db]
-               (tmb/spy (assoc-in db [:ui-common :mode] new-state)))))
+  [path new-state]
+  (unwrap-db (fn fsm-state-trans [db] (assoc-in db path new-state))))
 
 
-(def machine
-  {:preview-note {:hide         (compose
-                                  (state-transition :hidden)
-                                  ;(hide-fx)
-                                  )
-                  :esc          (compose
-                                  (state-transition :hidden)
-                                  ;(hide-fx)
-                                  )
-                  :search-view  (state-transition :search-view)
-                  :note-editor  (state-transition :note-editor)
-                  :search-tag   (compose
-                                  (state-transition :search-view)
-                                  sve/change-tag-search)
-                  :edit-preview (compose
-                                  (state-transition :note-editor)
-                                  ;(copy-preview-note-form)
-                                  )
-                  :pin          (compose
-                                  (state-transition :pinned)
-                                  ;(dispatch-main open-new)
-                                  )}
-   :search-view  {:note-editor (state-transition :note-editor)
-                  :view-note   (compose
-                                 (state-transition :preview-note)
-                                 ;(move-search-view-to-preview)
-                                 )
-                  :hide        (compose
-                                 (state-transition :hidden)
-                                 ;(hide-fx)
-                                 )
-                  :esc         (compose
-                                 (state-transition :hidden)
-                                 ;(clear-search-query)
-                                 )}
-   :note-editor  {:esc         (compose
-                                 (state-transition :hidden)
-                                 ;(clear-editor)
-                                 )
-                  :submit      (compose
-                                 (state-transition :hidden)
-                                 ;(clear-editor)
-                                 ;(submit-note)
-                                 ;(hide-fx)
-                                 )
-                  :search-view (state-transition :search-view)}
-   :hidden       {:search-view (state-transition :search-view)
-                  :note-editor (state-transition :note-editor)}
-   :pinned       {:esc nil #_(dispose-window)}
-   })
+(defn ident-and-warn [cofx-map] 
+  (tmb/warn "got cofx map that cannot be transitioned from. " cofx-map)
+  {})
+
+
 
 
 (defn invoke-fms
   "take the current state from :db in cofx-map and invoke the transition.
   if the transition fails, no change is applied and we throw errors to the console"
-  [transition cofx-map]
+  [machine transition cofx-map]
   (let [curr-state (get-in cofx-map [:db :ui-common :mode])
         transitions-map (get machine curr-state)
-        action (get transitions-map transition)
+        action (get transitions-map transition ident-and-warn)
         res (action cofx-map)]
     (if (not= res :fsm/failure)
       res
       {})))
 
 (defn fx-handler
-  "take a transition name and put it through the fms. must have the 
-  :db cofx installed in the event handler"
-  [transition]
+  "take a machine and a transition name and put it through the fms. must have the 
+  :db cofx installed in the event handler (default re-frame behavior)"
+  [machine transition]
   (fn fsm-refx-handler [cofx _]
-    (invoke-fms transition cofx)))
+    (tmb/debug "invoking transition " transition)
+    (invoke-fms machine transition cofx)))
 
-;(rf/reg-event-fx
-;  :note-editor/submit-note-form
-;  ;eu/default-interceptors
-;  (fx-handler :esc))

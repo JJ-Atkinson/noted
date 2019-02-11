@@ -75,8 +75,15 @@
   [::rp/set-keydown-rules
    {:event-keys [[[:handle-esc]
                   [{:keyCode 27}]]
-                 [[:preview-note/maybe-edit]
+                 [[:preview-note/goto-editor]
                   [{:keyCode 69                             ; E
                     :ctrlKey true}]]]
     ; esc
     :always-listen-keys [{:keyCode 27}]}])
+
+
+; todo find a proper home for this. cant be in events because of a circular dep
+
+(rf/reg-fx
+  :hide-window
+  (fn [_] (noted.core/hide-self)))
