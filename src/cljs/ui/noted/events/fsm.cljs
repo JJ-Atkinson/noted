@@ -78,8 +78,8 @@
 (defn invoke-fms
   "take the current state from :db in cofx-map and invoke the transition.
   if the transition fails, no change is applied and we throw errors to the console"
-  [machine transition cofx-map]
-  (let [curr-state (get-in cofx-map [:db :ui-common :mode])
+  [machine mode-path transition cofx-map]
+  (let [curr-state (get-in cofx-map mode-path)
         transitions-map (get machine curr-state)
         action (get transitions-map transition ident-and-warn)
         res (action cofx-map)]
@@ -90,8 +90,8 @@
 (defn fx-handler
   "take a machine and a transition name and put it through the fms. must have the 
   :db cofx installed in the event handler (default re-frame behavior)"
-  [machine transition]
+  [machine mode-path transition]
   (fn fsm-refx-handler [cofx _]
     (tmb/debug "invoking transition " transition)
-    (invoke-fms machine transition cofx)))
+    (invoke-fms machine mode-path transition cofx)))
 

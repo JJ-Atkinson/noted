@@ -37,7 +37,14 @@
   #(assoc-in % [:note-editor :note-form]
              specs/default-note-editor-form)))
 
-(defn dispatch-update-notes 
+
+(defn move-id-into-editor [db id]
+  (assoc-in db [:note-editor :note-form]
+            (-> (get-in db [:ui-common :notes id])
+                (update :tags uc/stringify-tags))))
+
+(defn dispatch-update-notes
   "take the current notes in memory and send them to the main proc for storage"
   [cofx collected-fx]
-  (merge collected-fx {:update-notes-fn (get-in (:db cofx) [:ui-common :notes])}))
+  (let [db-src (if (contains? collected-fx :db) collected-fx cofx)]
+    (merge collected-fx {:update-notes-fn (get-in (:db db-src) [:ui-common :notes])})))

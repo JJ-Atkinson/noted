@@ -17,5 +17,8 @@
                     #(str/replace %
                                   #"\{\{\{(\d+)\}\}\}"
                                   (fn [[_ n]]
-                                    (basic-render (get notes (cljs.reader/read-string n))))))
+                                    (let [id (cljs.reader/read-string n)]
+                                      (if (contains? notes id)
+                                        (basic-render (get notes id))
+                                        "\n\n`{{{Missing Note}}}`\n\n")))))
       ) notes))

@@ -29,7 +29,7 @@
   :<- [:all-notes-processed]
   (fn [all-notes _]
     ; simplifies life in the search function
-    (clj->js  (vals all-notes))))
+    (clj->js (vals all-notes))))
 
 (rf/reg-sub
   :search-view/query-results
@@ -44,6 +44,11 @@
   (fn [db _]
     (get-in db [:ui-common :notes
                 (get-in db [:preview-note :id]) :title])))
+
+(rf/reg-sub
+  :preview-note/deleting?
+  (fn [db _]
+    (= :deleting? (get-in db [:preview-note :mode]))))
 
 (rf/reg-sub
   :preview-note/content
