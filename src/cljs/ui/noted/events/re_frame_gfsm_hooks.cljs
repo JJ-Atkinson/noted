@@ -3,48 +3,18 @@
             [noted.events.events-utils :as eu]
             [noted.events.global-state-fsm :as gfsm]))
 
+(defn basic-hook [event-name fsm-transition]
+  (rf/reg-event-fx
+    event-name
+    eu/default-interceptors
+    (gfsm/views-fsm-> fsm-transition)))
 
-(rf/reg-event-fx
-  :handle-esc
-  eu/default-interceptors
-  (gfsm/views-fsm-> :esc))
+(def event-mappings {:handle-esc                        :esc
+                     :search-view/goto-view             :search-view
+                     :search-view/goto-view-with-search :search-tag
+                     :preview-note/goto-editor          :edit-preview
+                     :preview-note/set-and-open-id      :view-note
+                     :preview-note/pin                  :pin
+                     :note-editor/submit-note-form      :submit})
 
-
-; ~~~~~~~~~~~~~~~~~~~ search-view ~~~~~~~~~~~~~~~~~~~~~~
-; todo all of these events will be moved out asap.
-
-(rf/reg-event-fx
-  :search-view/goto-view
-  eu/default-interceptors
-  (gfsm/views-fsm-> :search-view))
-
-(rf/reg-event-fx
-  :search-view/goto-view-with-search
-  eu/default-interceptors
-  (gfsm/views-fsm-> :search-tag))
-
-
-; ~~~~~~~~~~~~~~~~~~ preview-note ~~~~~~~~~~~~~~~~~~~~~
-
-
-(rf/reg-event-fx
-  :preview-note/goto-editor
-  eu/default-interceptors
-  (gfsm/views-fsm-> :edit-preview))
-
-(rf/reg-event-fx
-  :preview-note/set-and-open-id
-  eu/default-interceptors
-  (gfsm/views-fsm-> :view-note))
-
-(rf/reg-event-fx
-  :preview-note/pin
-  eu/default-interceptors
-  (gfsm/views-fsm-> :pin))
-
-; ~~~~~~~~~~~~~~~~~~ note-editor ~~~~~~~~~~~~~~~~~~~~~~
-
-(rf/reg-event-fx
-  :note-editor/submit-note-form
-  eu/default-interceptors
-  (gfsm/views-fsm-> :submit))
+(doall (map (fn [[name trans]] (basic-hook name trans)) event-mappings))
