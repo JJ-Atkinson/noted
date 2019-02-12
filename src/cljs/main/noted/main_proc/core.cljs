@@ -86,8 +86,13 @@
   ; Path is relative to the compiled js file (main.js in our case)
   (.loadURL ^js/electron.BrowserWindow @main-window (str "file://" js/__dirname "/public/index.html"))
   #_(.on ^js/electron.BrowserWindow @main-window "closed" #(reset! main-window nil))
-  (let [contents (.-webContents ^js/electron.BrowserWindow @main-window)]
-    (.on contents "did-finish-load" #(show-window)))
+  (let [contents (.-webContents ^js/electron.BrowserWindow @main-window)
+        open-link (fn [e url]
+                    (.preventDefault e)
+                    (.openExternal (.-shell electron) url))]
+    (.on contents "did-finish-load" #(show-window))
+    (.on contents "new-window" open-link)
+    (.on contents "will-navigate" open-link))
   #_(.minimize ^js/electron.BrowserWindow @main-window))
 
 (defn create-keymap []
@@ -102,8 +107,6 @@
            :submitURL   "https://example.com/submit-url"
            :autoSubmit  false}))
 
-#_(.on app "window-all-closed" #(when-not (= js/process.platform "darwin")
-                                  (.quit app)))
 (.on app "ready" #(do (make-window)
                       (create-keymap)))
 

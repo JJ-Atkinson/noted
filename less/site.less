@@ -19,7 +19,7 @@ a {
 }
 
 #app {
-  border-top: 25px solid @bright-purple;
+  border-top: 32px solid @bright-purple;
   -webkit-app-region: drag;
 
   * {
@@ -36,7 +36,7 @@ a {
   width: 100%;
   font-size: 16px;
   font-family: Roboto, Segoe UI, sans-serif;
-  border: 5px solid @bright-purple;
+  border: 7px solid @bright-purple;
   border-top: 0px solid @bright-purple;
   background: transparent;
 
@@ -112,7 +112,8 @@ code {
 
 
 .search-view .results > div {
-  border: 1px solid #eee;
+  border-top: 1px solid #eee;
+  //bo: 1px solid #eee;
   transition: box-shadow 0.3s, background-color 0.3s;
   padding: 1.5em;
 
@@ -146,7 +147,7 @@ code {
 
 .search-view .results > div:hover {
   //background-color: lighten(#E1BEE7, 12%);
-  box-shadow: 0 0 17px 8px #bbba;
+  box-shadow: 0 0 27px 18px #bbba;
 }
 
 .note-editor {
@@ -174,10 +175,13 @@ code {
     display: flex;
     flex-direction: row;
 
-    .submit {
+    
+    .tags {
+      flex-shrink: 1;
     }
-
-    .submit:hover, .submit:focus {
+    .submit {
+      flex-shrink: 0;
+      min-width: 7em;
     }
 
   }
