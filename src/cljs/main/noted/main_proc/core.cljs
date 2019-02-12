@@ -55,11 +55,15 @@
                  :visible? visible?}))))
 
 
-(defn show-window [mode]
-  (if-let [win ^js/electron.BrowserWindow @main-window]
-    (let [vis? (window-visible?)]
-      (.show win)
-      (send-mode-switch-message mode vis?))))
+(defn show-window
+  ([mode]
+   (if-let [win ^js/electron.BrowserWindow @main-window]
+     (let [vis? (window-visible?)]
+       (.show win)
+       (send-mode-switch-message mode vis?))))
+  ([]
+   (if-let [win ^js/electron.BrowserWindow @main-window]
+     (.show win))))
 
 
 (defn hide-window []
@@ -67,24 +71,25 @@
     (.hide win)))
 
 
-(defn init-browser []
+(defn make-window []
   (reset! main-window (browser-window.
                         (clj->js {:with      200
                                   :height    500
-                                  :show      true
+                                  :show      false
                                   :resizable true
                                   :frame     false
                                   })))
-  
+
   ; Path is relative to the compiled js file (main.js in our case)
   (.loadURL ^js/electron.BrowserWindow @main-window (str "file://" js/__dirname "/public/index.html"))
   #_(.on ^js/electron.BrowserWindow @main-window "closed" #(reset! main-window nil))
-  #_(let [contents (. ^js/electron.BrowserWindow @main-window -webContents)]
-      (.on contents "did-finish-load" #(dispatch-stored-notes)))
+  (let [contents (.-webContents ^js/electron.BrowserWindow @main-window)]
+    (.on contents "did-finish-load" #(show-window)))
+  #_(.minimize ^js/electron.BrowserWindow @main-window))
 
-  #_(.minimize ^js/electron.BrowserWindow @main-window)
-  (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search-view)
-  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :note-editor))))
+(defn create-keymap []
+  (.register global-shortcut "CommandOrControl+Shift+N" #(show-window :note-editor))
+  (.register global-shortcut "CommandOrControl+Shift+S" #(show-window :search-view)))
 
 ; CrashReporter can just be omitted
 (.start crash-reporter
@@ -96,7 +101,8 @@
 
 #_(.on app "window-all-closed" #(when-not (= js/process.platform "darwin")
                                   (.quit app)))
-(.on app "ready" init-browser)
+(.on app "ready" #(do (make-window)
+                      (create-keymap)))
 
 (.on app "will-quit" #(.unregisterAll global-shortcut))
 
@@ -110,4 +116,8 @@
 
                                    (= e ":pull")
                                    (dispatch-stored-notes)
+
+                                   (= e ":create-new")
+                                   (make-window)
+
                                    :else (tmb/debug "forgot ipc message? " e)))))

@@ -26,6 +26,7 @@
                                   pne/copy-preview-note-form)
                   :pin          (compose
                                   (state-> :pinned)
+                                  ct/open-new-window
                                   #_(dispatch-main open-new))}
    :search-view  {:search-view hide-transition
                   :note-editor (state-> :note-editor)
@@ -50,7 +51,8 @@
                   :search-view (state-> :search-view)}
    :hidden       {:search-view (state-> :search-view)
                   :note-editor (state-> :note-editor)}
-   :pinned       {:esc (state-> :preview-note) #_(dispose-window)}})
+   :pinned       {:esc         ct/close-window
+                  :pin         ct/close-window}})
 
 
 (def views-fsm-> (partial fsm/fx-handler machine))
