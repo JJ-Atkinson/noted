@@ -17,7 +17,7 @@
 ; contain top level behavior, and as often as possible should be shrunk.
 ; not all events will be incorporated into the fsm. Only view change events will be
 ; considered for the top level one. If views are complex enough, I may add additional 
-; fsms in the future. It wouldn't be that hard at the moment
+; fsms in the future.
 
 
 (rf/reg-event-fx
