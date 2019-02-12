@@ -9,7 +9,7 @@
                            rf/trim-v])
 
 (defn gen-id [curr-ids]
-  (inc (apply max curr-ids)))
+  (inc (apply max (conj curr-ids 1))))
 
 (defn basic-event [name path]
   (rf/reg-event-db
