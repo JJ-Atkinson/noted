@@ -41,6 +41,7 @@
      :search-view [search-view/search-view]
      :note-editor [note-editor/note-editor]
      :preview-note [preview-note/preview-note]
+     :pinned [preview-note/preview-note]
      nil)])
 
 
@@ -87,3 +88,8 @@
 (rf/reg-fx
   :hide-window
   (fn [_] (noted.core/hide-self)))
+
+
+(rf/reg-fx
+  :update-notes-fn
+  (fn [notes] (noted.core/dispatch-updated-notes notes)))

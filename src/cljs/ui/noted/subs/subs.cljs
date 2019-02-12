@@ -37,7 +37,7 @@
   :<- [:all-notes-processed]
   :<- [:private/all-notes->js]
   (fn [[query all-notes-processed js-notes] _]
-    (vals (st/search query all-notes-processed js-notes))))
+    (map su/render-contents (take 50 (vals (st/search query all-notes-processed js-notes))))))
 
 (rf/reg-sub
   :preview-note/title
@@ -62,3 +62,8 @@
   (fn [db _]
     (get-in db [:ui-common :notes
                 (get-in db [:preview-note :id]) :tags])))
+
+(rf/reg-sub
+  :preview-note/pinned-mode?
+  (fn [db _]
+    (= :pinned (get-in db [:ui-common :mode]))))

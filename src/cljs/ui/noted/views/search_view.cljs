@@ -37,6 +37,8 @@
                          {:on-click #(e> [:preview-note/set-and-open-id (:id note)])
                           :key      (str (:id note))}
                          [:span.title (:title note)]
-                         [:p.content (:content note)]
+                         [:p.content
+                          {:dangerouslySetInnerHTML
+                           {:__html (:content note)}}]
                          [render-tags (:tags note)]])
                       (<s [:search-view/query-results]))]])
