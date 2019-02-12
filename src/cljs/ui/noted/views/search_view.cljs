@@ -16,7 +16,7 @@
                                   (.stopPropagation e)
                                   (e> [:search-view/insert-tag-into-search tag])
                                   true)
-                      :key tag}
+                      :key      tag}
                      (str "#" tag)])
                   tags)])
 
@@ -29,14 +29,12 @@
     :default-value (rf/subscribe [:search-view/query-string])
     :class "search"
     :placeholder "#tag fuzzy search"]
-   [
-    
-    
-    :div.results (map (fn [note]
+   [:div.results (map (fn [note]
                         [:div
-                         {:on-click #(e> [:preview-note/set-and-open-id (:id note)])
-                          :key      (str (:id note))}
-                         [:span.title (:title note)]
+                         {:key (str (:id note))}
+                         [:span.title
+                          {:on-click #(e> [:preview-note/set-and-open-id (:id note)])}
+                          (:title note)]
                          [:p.content
                           {:dangerouslySetInnerHTML
                            {:__html (:content note)}}]

@@ -1,8 +1,7 @@
 (ns noted.events.fsm
   (:require [re-frame.core :as rf]
             [taoensso.timbre :as tmb]
-            [noted.events.common-transitions :as ct]
-            ))
+            [noted.events.common-transitions :as ct]))
 
 ; this will not be a complete implementation of a finite state machine. It
 ; will only govern inter-state transitions. anything that is constrained to
