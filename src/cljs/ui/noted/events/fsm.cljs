@@ -71,10 +71,9 @@
 
 
 (defn ident-and-warn [cofx-map]
-  (tmb/warn "got cofx map that cannot be transitioned from. " cofx-map)
+  (tmb/warn "got cofx map that cannot be transitioned from. may be an 
+  un-implemented feature, or intentional" cofx-map)
   {})
-
-
 
 
 (defn invoke-fms
