@@ -75,16 +75,17 @@
 
 
 (s/def ::id int?)
-(s/def ::preview-note (s/keys :req-un [::id]))
-(s/def ::window-id int?)
+(s/def :preview-note/mode #{:deleting? :normal})
+(s/def ::preview-note (s/keys :req-un [::id
+                                       :preview-note/mode]))
 
 (def default-note-editor-form {:id      -1
                                :content ""
                                :title   ""
                                :tags    ""})
 
-(def default-db {:window-id    0
-                 :preview-note {:id 0}
+(def default-db {:preview-note {:id 0
+                                :mode :normal}
                  :note-editor  {:note-form default-note-editor-form}
                  :search-view  {:query ""}
                  :ui-common    {:mode  :note-editor

@@ -26,7 +26,7 @@
   (fn [cofx]
     (let [parsed (cljs.reader/read-string (str (get-in cofx [:event 0])))]
       (condp #(contains? %2 %1) parsed
-        :mode (fsm/invoke-fms gfsm/machine (:mode parsed) cofx)
+        :mode (fsm/invoke-fms gfsm/machine [:db :ui-common :mode] (:mode parsed) cofx)
         :store {:dispatch [:update-note-store (:store parsed)]}
         (tmb/error "unexpected message: " parsed)))))
 

@@ -26,8 +26,7 @@
                                   pne/copy-preview-note-form)
                   :pin          (compose
                                   (state-> :pinned)
-                                  ct/open-new-window
-                                  #_(dispatch-main open-new))}
+                                  ct/open-new-window)}
    :search-view  {:search-view hide-transition
                   :note-editor (state-> :note-editor)
                   :view-note   (compose
@@ -54,5 +53,5 @@
    :pinned       {:esc         ct/close-window
                   :pin         ct/close-window}})
 
-
-(def views-fsm-> (partial fsm/fx-handler machine))
+; take a name of a transition and pass it through a fx handler
+(def views-fsm-> (partial fsm/fx-handler machine [:db :ui-common :mode]))
