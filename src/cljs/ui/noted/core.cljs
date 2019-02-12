@@ -22,7 +22,10 @@
 
 (def electron (js/require "electron"))
 (def ipc (.-ipcRenderer electron))
+(def remote (.-remote electron))
 (defn hide-self [] (.send ipc "message" ":hide"))
+(defn open-new-window [] (.send ipc "message" ":create-new"))
+(defn kill-self [] (.close (.getCurrentWindow remote)))
 (defn dispatch-pull-req-from-main [] (.send ipc "message" ":pull"))
 (defn dispatch-updated-notes [notes] (.send ipc "message" (str ":store" notes)))
 
@@ -93,3 +96,13 @@
 (rf/reg-fx
   :update-notes-fn
   (fn [notes] (noted.core/dispatch-updated-notes notes)))
+
+
+(rf/reg-fx
+  :close-window
+  (fn [_] (noted.core/kill-self)))
+
+
+(rf/reg-fx
+  :open-new-window
+  (fn [_] (noted.core/open-new-window)))
