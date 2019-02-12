@@ -14,13 +14,16 @@
 
 
 
+(def settings-file (str (.getPath app "documents") "/noted-settings.edn"))
 
 
+(defn get-storage-file-loc []
+  (if (.existsSync fs settings-file)
+    (:storage (cljs.reader/read-string (str (.readFileSync fs settings-file))))
+    (str (.getPath app "documents") "/noted-store.edn\"")))
 
-(tmb/debug "getPath document" (.getPath app "documents"))
-
-(def storage-file (str (.getPath app "documents") "/noted-store.edn"))
-(def storage-file-old (str (.getPath app "documents") "/noted-store.edn.old"))
+(def storage-file (get-storage-file-loc))
+(def storage-file-old (str storage-file ".old"))
 
 
 (defn get-stored-notes []
