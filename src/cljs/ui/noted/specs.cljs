@@ -86,17 +86,7 @@
                  :note-editor  {:note-form default-note-editor-form}
                  :search-view  {:query ""}
                  :ui-common    {:mode  :note-editor
-                                :notes [#_{
-                                           :title   "Where to locate lein"
-                                           :content "`which lein`"
-                                           :tags    ["bash" "tools"]}
-                                        #_{
-                                           :title   "Profiles in lein"
-                                           :content "Profiles override arbitrary values in the base of 
-          `defproject`. They can be used on any command with `lein with-profile [name] ...`"
-                                           :tags    ["lein"]
-                                           }
-                                        ]}})
+                                :notes []}})
 
 
 (rf/reg-event-db

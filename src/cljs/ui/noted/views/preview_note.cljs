@@ -18,9 +18,15 @@
       {:type     "button"
        :value    "< Search"
        :on-click #(e> [:search-view/goto-view])}]
+     [:i.pin.material-icons
+      {:type     "button"
+       :on-click #(e> [:preview-note/pin])}
+      (if (<s [:preview-note/pinned-mode?])
+        "lock"
+        "lock_open")]
      [:input.edit
       {:type     "button"
-       :value    "Edit >"
+       :value "Edit >"
        :on-click #(e> [:preview-note/goto-editor])}]]]
    (into [:div.tags]
          (map (fn [t] [:a

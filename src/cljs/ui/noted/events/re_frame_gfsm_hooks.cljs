@@ -37,6 +37,11 @@
   eu/default-interceptors
   (gfsm/views-fsm-> :view-note))
 
+(rf/reg-event-fx
+  :preview-note/pin
+  eu/default-interceptors
+  (gfsm/views-fsm-> :pin))
+
 ; ~~~~~~~~~~~~~~~~~~ note-editor ~~~~~~~~~~~~~~~~~~~~~~
 
 (rf/reg-event-fx

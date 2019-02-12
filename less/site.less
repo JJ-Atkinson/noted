@@ -57,7 +57,7 @@ input:focus, textarea:focus {
   border: 8px solid @dark-purple !important;
 }
 
-input[type="button"] {
+input[type="button"], i[type="button"] {
   flex-grow: 0;
   min-width: 7em;
   border: none;
@@ -69,7 +69,7 @@ input[type="button"] {
   cursor: default !important;
 }
 
-input[type="button"]:hover, input[type="button"]:focus {
+input[type="button"]:hover, input[type="button"]:focus, i[type="button"]:hover, i[type="button"]:focus  {
   background-color: @dark-purple;
 }
 
@@ -219,14 +219,30 @@ input[type="button"]:hover, input[type="button"]:focus {
       align-items: flex-start;
       padding: 0;
       margin: 0;
+      min-height: 2.7em;
+      height: 2.7em;
+      max-height: 2.7em;
 
-      .search, .edit {
-        min-height: 2.7em;
+      .search, .edit, .pin {
+        //min-height: 2.7em;
+        min-height: 100%;
+      }
+      
+      .pin {
+        font-size: 20px;
+        padding-top: 0.4em;
+        display: table-cell;
+        min-width: 2.7em;
+        //min-width: unset;
+        text-align: center;
+      }
+      
+      .search, .pin {
+        border-right: 1px solid average(@bright-purple, @dark-purple);
       }
 
       .search {
         border-radius: 0 0 0 5px;
-        border-right: 1px solid average(@bright-purple, @dark-purple);
       }
     }
   }
