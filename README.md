@@ -13,6 +13,8 @@ lein re-frisk
 electron .
 ```
 
+`Ctrl+Shift+N` opens the new note view. `Ctrl+Shift+S` opens the search view. Hitting those combos again hides the window saving state. Switching between views also maintains state. Hitting `Esc` will hide the window and kill any current state. 
+
 We have 2 builds, ui and electron main. UI pulls from both the `/cljs/ui` and `/cljs/common` folders. The main class is `electro-note.core`. Main pulls from both the `/cljs/main` and `/cljs/common` folders. The main class is `electro-note.main-proc.core`. 
 
 todo:
